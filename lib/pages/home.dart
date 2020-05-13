@@ -36,20 +36,21 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _pageIndex;
-
   @override
   void initState() {
     super.initState();
     _pageIndex = 0;
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: AnimatedContainer(
-        color: widget.tabItems[_pageIndex].color,
-        child: widget.tabItems[_pageIndex].screen,
-        duration: const Duration(milliseconds: 300),
+      body: Stack(
+        children: [
+          _buildOffstageNavigator(0),
+          _buildOffstageNavigator(1),
+          _buildOffstageNavigator(2),
+          _buildOffstageNavigator(3)
+        ],
       ),
       bottomNavigationBar: AnimatedBottomBar(
         items: widget.tabItems,
@@ -57,6 +58,31 @@ class _HomePageState extends State<HomePage> {
           setState(() {
             _pageIndex = index;
           });
+        },
+      ),
+    );
+  }
+  Map<String, WidgetBuilder> _routeBuilders(BuildContext context, int index) {
+    return {
+      '/': (context) {
+        return [
+          HistoryScreen(),
+          TrackingScreen(),
+          PrivacyScreen(),
+          SettingScreen()
+        ].elementAt(index);
+      },
+    };
+  }
+  Widget _buildOffstageNavigator(int index) {
+    var routeBuilders = _routeBuilders(context, index);
+    return Offstage(
+      offstage: _pageIndex != index,
+      child: Navigator(
+        onGenerateRoute: (routeSettings) {
+          return MaterialPageRoute(
+            builder: (context) => routeBuilders[routeSettings.name](context),
+          );
         },
       ),
     );

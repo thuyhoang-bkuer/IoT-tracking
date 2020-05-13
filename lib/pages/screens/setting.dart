@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:tracking_app/pages/screens/setting_account.dart';
+import 'package:tracking_app/pages/screens/setting_device.dart';
+import 'package:tracking_app/pages/screens/setting_info.dart';
 
 class SettingScreen extends StatefulWidget {
   @override
@@ -7,8 +10,9 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   @override
-  var _color = Color(0xFF319B7F);
-  Container buildContent(IconData icon, String label, bool isEnd,bool isButton, Color color ){
+  String name_user = "Bá Anh Bùi";
+  String email = "buibaanh0405@gmail.com";
+  Container buildContent(IconData icon, String label, bool isEnd,bool isButton, Color color, Widget widget ){
     return Container(
       color: Colors.white,
 //      width: 375,
@@ -40,7 +44,8 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                   ),
                   Container(
-                    child: isButton ? IconButton(icon : Icon(Icons.keyboard_arrow_right,color: Colors.grey,),onPressed: () => null,) : null,
+                    child: isButton ? IconButton(icon : Icon(Icons.keyboard_arrow_right,color: Colors.grey,),
+                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => widget)),) : null,
                   )
                 ],
               ),
@@ -79,6 +84,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             Expanded(
                               flex: 5,
                               child: Container(
+                                padding: const EdgeInsets.only(left: 10),
                                 width: 230,
                                 child: Text("Tracking Lover",
                                   style: TextStyle(
@@ -102,7 +108,6 @@ class _SettingScreenState extends State<SettingScreen> {
                         alignment: Alignment.center,
                         child: Text("CÀI ĐẶT",style: TextStyle(fontSize: 34,fontFamily: "Roboto"),),
                       ),
-
                     ],
                   ),
                 ),
@@ -132,14 +137,14 @@ class _SettingScreenState extends State<SettingScreen> {
                                   alignment: Alignment.centerLeft,
                                   child: Container(
                                     margin: const EdgeInsets.all(2),
-                                    child: Text("Bá Anh Bùi",style: TextStyle(fontFamily: "Roboto",fontWeight: FontWeight.w500,fontSize: 16),),
+                                    child: Text(name_user,style: TextStyle(fontFamily: "Roboto",fontWeight: FontWeight.w500,fontSize: 16),),
                                   )
                               ),
                               Align(
                                 alignment: Alignment.centerLeft,
                                 child: Container(
                                     margin: const EdgeInsets.all(2),
-                                    child: Text("buibaanh0405@gmail.com",style: TextStyle(fontFamily: "Roboto",fontSize: 12),)
+                                    child: Text(email,style: TextStyle(fontFamily: "Roboto",fontSize: 12),)
                                 ),
                               ),
 
@@ -148,7 +153,9 @@ class _SettingScreenState extends State<SettingScreen> {
                         ),
                       ),
                       Expanded(
-                        child: IconButton(icon : Icon(Icons.keyboard_arrow_right,color: Colors.grey,),onPressed: () => null,),
+                        child: IconButton(
+                          icon : Icon(Icons.keyboard_arrow_right,color: Colors.grey,),
+                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SettingAccount())),),
                       )
                     ],
                   ),
@@ -158,9 +165,9 @@ class _SettingScreenState extends State<SettingScreen> {
                   margin: const EdgeInsets.only(top: 7, bottom: 7),
                   child: Column(
                     children: <Widget>[
-                      buildContent(Icons.my_location, "Thiết bị",false,true,Color(0xFF319B7F)),
-                      buildContent(Icons.lock, "Chính sách riêng tư",false,true,Color(0xFF319B7F)),
-                      buildContent(Icons.info_outline, "Thông tin về Tracking Lover",true,true,Color(0xFF319B7F)),
+                      buildContent(Icons.my_location, "Thiết bị",false,true,Color(0xFF319B7F),SettingDevice()),
+                      buildContent(Icons.lock, "Chính sách riêng tư",false,true,Color(0xFF319B7F),SettingAccount()),
+                      buildContent(Icons.info_outline, "Thông tin về Tracking Lover",true,true,Color(0xFF319B7F),SettingInfo()),
                     ],
                   ),
                 ),
@@ -169,8 +176,8 @@ class _SettingScreenState extends State<SettingScreen> {
                   margin: const EdgeInsets.only(top: 7,bottom: 7),
                   child: Column(
                     children: <Widget>[
-                      buildContent(Icons.group, "Chuyển tài khoản",false,true,Color(0xFF319B7F)) ,
-                      buildContent(Icons.exit_to_app, "Đăng xuất", false, false,Colors.pink)
+                      buildContent(Icons.group, "Chuyển tài khoản",false,true,Color(0xFF319B7F),null) ,
+                      buildContent(Icons.exit_to_app, "Đăng xuất", false, false,Colors.pink,null)
                     ],
                   ),
                 ),
@@ -180,5 +187,4 @@ class _SettingScreenState extends State<SettingScreen> {
       ),
     );
   }
-
 }
