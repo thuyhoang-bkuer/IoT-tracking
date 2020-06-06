@@ -11,6 +11,7 @@ class Styles {
 
   static const Color nearlyWhite = Color(0xFFFEFEFE);
   static const Color nearlyBlack = Color(0xFF213333);
+  static const Color backdrop = Color(0xFF737373);
   static const Color grey = Color(0xFF3A5160);
   static const Color darkGrey = Color(0xFF313A44);
   static const Color lightBlack = Color(0xff201F22);

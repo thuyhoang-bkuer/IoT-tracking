@@ -25,7 +25,7 @@ class DeviceBloc extends Bloc<DeviceEvent, DeviceState> {
 
     if (event is FetchDevices) {
       try {
-        final devices = await deviceRepository.fetchDevices(event.topic, event.payload);
+        final devices = await deviceRepository.fetchDevices();
         
         yield DeviceLoaded(devices);
       }

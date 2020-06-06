@@ -34,36 +34,43 @@ class _TrackingScreenState extends State<TrackingScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocListener<DeviceBloc, DeviceState>(
-        listener: (context, state) {},
-        child: BlocBuilder<DeviceBloc, DeviceState>(
-          builder: (context, state) {
-            if (state is DeviceInitial)
-              return _initialView(context, state);
-            else if (state is DeviceLoading)
-              return _loadingView(context, state);
-            else if (state is DeviceLoaded)
-              return _mapView(context, state);
-            else if (state is DeviceError)
-              return _initialView(context, state);
-            else
-              throw Error;
-          },
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: toggleHistoryBoard,
-        elevation: 1,
-        focusElevation: 0,
-        highlightElevation: 0,
-        backgroundColor: Styles.yellowy.withOpacity(0.8),
-        child: Icon(
-          Icons.history,
-          size: 24,
-          color: Styles.nearlyWhite,
-        ),
-        splashColor: Styles.yellowy,
+    return BlocListener<DeviceBloc, DeviceState>(
+      listener: (context, state) {},
+      child: BlocBuilder<DeviceBloc, DeviceState>(
+        builder: (context, state) {
+          Widget body;
+          bool isFabEnable = false;
+          if (state is DeviceInitial) {
+            body = _initialView(context, state);
+          } else if (state is DeviceLoading) {
+            body = _loadingView(context, state);
+          } else if (state is DeviceLoaded) {
+            body = _mapView(context, state);
+            isFabEnable = true;
+          } else if (state is DeviceError) {
+            body = _initialView(context, state);
+          } else
+            throw Error;
+
+          return Scaffold(
+            body: body,
+            floatingActionButton: isFabEnable
+                ? FloatingActionButton(
+                    onPressed: () => toggleHistoryBoard(state),
+                    elevation: 1,
+                    focusElevation: 0,
+                    highlightElevation: 0,
+                    backgroundColor: Styles.yellowy.withOpacity(0.8),
+                    child: Icon(
+                      Icons.history,
+                      size: 24,
+                      color: Styles.nearlyWhite,
+                    ),
+                    splashColor: Styles.yellowy,
+                  )
+                : null,
+          );
+        },
       ),
     );
   }
@@ -129,5 +136,70 @@ class _TrackingScreenState extends State<TrackingScreen>
     );
   }
 
-  void toggleHistoryBoard() {}
+  void toggleHistoryBoard(DeviceState state) {
+    final availableDevices =
+        state.devices.where((device) => device.status == Power.On).toList();
+
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Material(
+            color: Styles.backdrop,
+            child: Container(
+              height: MediaQuery.of(context).size.height / 3,
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                color: Styles.nearlyWhite,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                ),
+              ),
+              child: Column(
+                children: <Widget>[
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Text(
+                        "Details",
+                        style: TextStyle(
+                          color: Styles.yellowy,
+                          fontSize: 24,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView(
+                      children: List.generate(
+                        availableDevices.length,
+                        (i) => ListTile(
+                          leading: Icon(
+                            Icons.location_on,
+                            size: 32,
+                            color: Styles.yellowy,
+                          ),
+                          title: Text(
+                            availableDevices[i].name,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          subtitle: Text(availableDevices[i].id.toString()),
+                          onTap: showHistoryOf(availableDevices[i].id),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  showHistoryOf(int id) {
+    
+  }
 }
