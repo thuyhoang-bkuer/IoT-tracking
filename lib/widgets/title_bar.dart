@@ -9,7 +9,7 @@ class TitleBar extends StatelessWidget {
     return Material(
       elevation: 7.0,
       child: Padding(
-        padding: EdgeInsets.only(top: 30, left: 20, right: 20, bottom: 20),
+        padding: EdgeInsets.only(top: 40, left: 20, right: 20, bottom: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[

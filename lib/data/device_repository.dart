@@ -25,7 +25,11 @@ class LocalDeviceRepository extends DeviceRepository {
         noDevices,
         (index) => Device(
           id: 1000 + index,
-          positions: [Position(longitude: random.nextDouble() * 0.1 + 106.6, latitude: random.nextDouble() * 0.1 + 10.7, timestamp: DateTime.now())],
+          position: Position(
+            longitude: random.nextDouble() * 0.1 + 106.6,
+            latitude: random.nextDouble() * 0.1 + 10.7,
+            timestamp: DateTime.now(),
+          ),
           status: random.nextBool() ? Power.On : Power.Off,
         ),
       );
@@ -33,9 +37,7 @@ class LocalDeviceRepository extends DeviceRepository {
   }
 
   @override
-  Device putDevice(String topic, String payload) {
-    
-  }
+  Device putDevice(String topic, String payload) {}
 }
 
 class NetworkError extends Error {}
