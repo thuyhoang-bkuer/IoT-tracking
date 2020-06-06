@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:tracking_app/models/_.dart';
 import 'package:tracking_app/styles/index.dart';
@@ -35,11 +33,11 @@ class _AnimatedBottomBarState extends State<AnimatedBottomBar>
     return Material(
       elevation: 10.0,
       child: Padding(
-        padding: EdgeInsets.only(
-          top: 0,
-          bottom: Platform.isIOS ? 16 : 0,
-          left: 0,
-          right: 0,
+        padding: const EdgeInsets.only(
+          top: 16,
+          bottom: 32,
+          left: 16,
+          right: 16,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.max,
@@ -68,38 +66,34 @@ class _AnimatedBottomBarState extends State<AnimatedBottomBar>
           decoration: BoxDecoration(
             color:
                 isSelected ? item.color.withOpacity(0.15) : Colors.transparent,
-            borderRadius: BorderRadius.all(Radius.circular(0)),
+            borderRadius: BorderRadius.all(Radius.circular(30)),
           ),
-          child: SizedBox(
-            width: (MediaQuery.of(context).size.width - 32 * 3) * 0.33,
-            height: 32,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(
-                  item.iconData,
-                  color: isSelected ? item.color : Styles.nearlyBlack,
-                  size: item.iconSize,
-                ),
-                SizedBox(width: 10),
-                AnimatedSize(
-                  duration: widget.animationDuration,
-                  curve: Curves.easeInOut,
-                  vsync: this,
-                  child: Text(
-                    item.text,
-                    style: TextStyle(
-                      color: isSelected ? item.color : Styles.nearlyBlack,
-                      fontWeight: item.fontWeight,
-                      fontSize: item.fontSize,
-                    ),
+          child: Row(
+            children: <Widget>[
+              Icon(
+                item.iconData,
+                color: isSelected ? item.color : Styles.nearlyBlack,
+                size: item.iconSize,
+              ),
+              SizedBox(width: isSelected ? 10 : 0),
+              AnimatedSize(
+                duration: widget.animationDuration,
+                curve: Curves.easeInOut,
+                vsync: this,
+                child: Text(
+                  isSelected ? item.text : "",
+                  style: TextStyle(
+                    color: item.color,
+                    fontWeight: item.fontWeight,
+                    fontSize: item.fontSize,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       );
     });
   }
 }
+

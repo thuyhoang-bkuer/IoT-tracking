@@ -9,7 +9,7 @@ class _SettingScreenState extends State<SettingScreen> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text("Setting Page"),
+      child: Text("Setting"),
     );
   }
 }

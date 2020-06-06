@@ -1,41 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tracking_app/blocs/device_bloc.dart';
+import 'package:tracking_app/data/device_repository.dart';
 import 'package:tracking_app/models/_.dart';
 import 'package:tracking_app/pages/screens/_.dart';
+import 'package:tracking_app/styles/index.dart';
 import 'package:tracking_app/widgets/animated_bar.dart';
+import 'package:tracking_app/widgets/title_bar.dart';
 
 class HomePage extends StatefulWidget {
   List<AnimatedItem> tabItems = [
     AnimatedItem(
-      text: "History",
-      iconData: Icons.history,
-      color: Color(0xFFF4B400),
-      screen: HistoryScreen(),
+      text: "Devices",
+      iconData: Icons.device_hub,
+      color: Styles.greeny,
+      screen: DeviceScreen(),
+      fontSize: 18,
     ),
     AnimatedItem(
       text: "Track",
       iconData: Icons.gps_fixed,
-      color: Color(0xFF0F9D58),
+      color: Styles.greeny,
       screen: TrackingScreen(),
-    ),
-    AnimatedItem(
-      text: "Privacy",
-      iconData: Icons.book,
-      color: Color(0xFFDB4437),
-      screen: PrivacyScreen(),
+      fontSize: 18,
     ),
     AnimatedItem(
       text: "Setting",
       iconData: Icons.settings,
-      color: Color(0xFF4285F4),
+      color: Styles.greeny,
       screen: SettingScreen(),
+      fontSize: 18,
     ),
   ];
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   int _pageIndex;
+  List<Device> devices = [Device(id: 1234, name: 'World_One')];
 
   @override
   void initState() {
@@ -45,19 +49,29 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: AnimatedContainer(
-        color: widget.tabItems[_pageIndex].color,
-        child: widget.tabItems[_pageIndex].screen,
-        duration: const Duration(milliseconds: 300),
-      ),
-      bottomNavigationBar: AnimatedBottomBar(
-        items: widget.tabItems,
-        onItemTap: (index) {
-          setState(() {
-            _pageIndex = index;
-          });
-        },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => DeviceBloc(new LocalDeviceRepository()),
+        ),
+      ],
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(60),
+          child: TitleBar(),
+        ),
+        body: Container(
+          // create: (context) => HomeBloc(devices),
+          child: widget.tabItems[_pageIndex].screen,
+        ),
+        bottomNavigationBar: AnimatedBottomBar(
+          items: widget.tabItems,
+          onItemTap: (index) {
+            setState(() {
+              _pageIndex = index;
+            });
+          },
+        ),
       ),
     );
   }
