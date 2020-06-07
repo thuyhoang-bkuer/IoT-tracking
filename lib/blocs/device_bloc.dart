@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:tracking_app/data/_.dart';
 import 'package:tracking_app/models/_.dart';
 
@@ -22,7 +23,6 @@ class DeviceBloc extends Bloc<DeviceEvent, DeviceState> {
     DeviceEvent event,
   ) async* {
     yield DeviceLoading(state.devices);
-
     if (event is FetchDevices) {
       try {
         final devices = await deviceRepository.fetchDevices();
@@ -43,6 +43,11 @@ class DeviceBloc extends Bloc<DeviceEvent, DeviceState> {
       final Power status = jsonMap['status'] ? Power.On : Power.Off;
       state.devices[id].status = status;
 
+      yield DeviceLoaded(state.devices);
+    }
+    else if (event is LocateDevice) {
+      final Map<String, dynamic> jsonMap = json.decode(event.payload);
+      state.devices[jsonMap['id']].position = Position(latitude: jsonMap['latitude'], longitude: jsonMap['longitude']);
       yield DeviceLoaded(state.devices);
     }
   }

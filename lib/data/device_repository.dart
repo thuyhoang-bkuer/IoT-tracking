@@ -8,7 +8,7 @@ abstract class DeviceRepository {
 
   // Retrive from database
   Future<List<Device>> fetchDevices();
-  Future<List<Position>> fetchHistory(int deviceId);
+  // Future<List<Position>> fetchHistory(int deviceId);
 
   // // Store app's state into database
   // Future<void> putDevice(String topic, String payload);
@@ -43,7 +43,6 @@ class LocalDeviceRepository extends DeviceRepository {
     });
   }
 
-  @override
   Future<List<Position>> fetchHistory(int deviceId) {
     return Future.delayed(Duration(seconds: 1), () {
       final random = Random();

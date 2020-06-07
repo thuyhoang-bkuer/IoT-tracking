@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -20,6 +22,7 @@ class _TrackingScreenState extends State<TrackingScreen>
   AnimationController _controller;
   GoogleMapController _googleController;
   bool hasModal;
+  Timer interval;
 
   @override
   void initState() {
@@ -250,7 +253,7 @@ class _TrackingScreenState extends State<TrackingScreen>
             Padding(
               padding: EdgeInsets.all(10),
               child: Text(
-                "Déjà Vu - ${id.toString()}",
+                "Déjà Vu - Device ${id.toString()}",
                 style: TextStyle(
                   color: Styles.yellowy,
                   fontSize: 24,

@@ -32,3 +32,13 @@ class PutDevice extends DeviceEvent {
   @override
   List<Object> get props => [topic, payload];
 }
+
+
+class LocateDevice extends DeviceEvent {
+  final String topic;
+  final String payload;
+  const LocateDevice({this.topic, this.payload});
+
+  @override
+  List<Object> get props => [topic, payload];
+}
