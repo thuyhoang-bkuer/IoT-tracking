@@ -20,7 +20,7 @@ class HomePage extends StatefulWidget {
     AnimatedItem(
       text: "Track",
       iconData: Icons.gps_fixed,
-      color: Styles.greeny,
+      color: Styles.yellowy,
       screen: TrackingScreen(),
       fontSize: 18,
     ),
@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(60),
-          child: TitleBar(),
+          child: TitleBar(primaryColor: widget.tabItems[_pageIndex].color),
         ),
         body: Container(
           // create: (context) => HomeBloc(devices),

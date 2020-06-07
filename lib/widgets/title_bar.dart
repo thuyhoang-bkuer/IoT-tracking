@@ -4,6 +4,10 @@ import 'package:tracking_app/blocs/_.dart';
 import 'package:tracking_app/styles/index.dart';
 
 class TitleBar extends StatelessWidget {
+  final Color primaryColor;
+
+  const TitleBar({Key key, this.primaryColor}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -18,7 +22,7 @@ class TitleBar extends StatelessWidget {
                 child: Text(
                   "Tracking Lover",
                   style: TextStyle(
-                      color: Styles.greeny,
+                      color: primaryColor,
                       fontSize: 27,
                       fontWeight: FontWeight.w500),
                 )),

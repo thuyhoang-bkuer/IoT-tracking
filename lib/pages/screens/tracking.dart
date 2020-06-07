@@ -19,11 +19,13 @@ class _TrackingScreenState extends State<TrackingScreen>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
   GoogleMapController _googleController;
+  bool hasModal;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
+    hasModal = false;
   }
 
   @override
@@ -55,19 +57,47 @@ class _TrackingScreenState extends State<TrackingScreen>
           return Scaffold(
             body: body,
             floatingActionButton: isFabEnable
-                ? FloatingActionButton(
-                    onPressed: () => toggleHistoryBoard(state),
-                    elevation: 1,
-                    focusElevation: 0,
-                    highlightElevation: 0,
-                    backgroundColor: Styles.yellowy.withOpacity(0.8),
-                    child: Icon(
-                      Icons.history,
-                      size: 24,
-                      color: Styles.nearlyWhite,
-                    ),
-                    splashColor: Styles.yellowy,
-                  )
+                ? hasModal
+                    ? Builder(
+                        builder: (context) => FloatingActionButton(
+                          onPressed: () {
+                            setState(() {
+                              hasModal = false;
+                            });
+                            Navigator.pop(context);
+                          },
+                          elevation: 1,
+                          focusElevation: 0,
+                          highlightElevation: 0,
+                          backgroundColor: Styles.yellowy,
+                          child: Icon(
+                            Icons.close,
+                            size: 24,
+                            color: Styles.nearlyWhite,
+                          ),
+                          splashColor: Styles.yellowy,
+                        ),
+                      )
+                    : Builder(
+                        builder: (context) => FloatingActionButton(
+                          onPressed: () {
+                            setState(() {
+                              hasModal = true;
+                            });
+                            toggleHistoryBoard(context, state);
+                          },
+                          elevation: 1,
+                          focusElevation: 0,
+                          highlightElevation: 0,
+                          backgroundColor: Styles.yellowy,
+                          child: Icon(
+                            Icons.history,
+                            size: 24,
+                            color: Styles.nearlyWhite,
+                          ),
+                          splashColor: Styles.yellowy,
+                        ),
+                      )
                 : null,
           );
         },
@@ -136,70 +166,113 @@ class _TrackingScreenState extends State<TrackingScreen>
     );
   }
 
-  void toggleHistoryBoard(DeviceState state) {
+  void toggleHistoryBoard(BuildContext context, DeviceState state) {
     final availableDevices =
         state.devices.where((device) => device.status == Power.On).toList();
 
-    showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return Material(
-            color: Styles.backdrop,
-            child: Container(
-              height: MediaQuery.of(context).size.height / 3,
-              margin: EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                color: Styles.nearlyWhite,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                ),
+    Scaffold.of(context).showBottomSheet(
+      (context) {
+        return Material(
+          color: Colors.transparent,
+          child: Container(
+            height: MediaQuery.of(context).size.height / 3,
+            margin: EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(
+              color: Styles.nearlyWhite,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
               ),
-              child: Column(
-                children: <Widget>[
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Text(
-                        "Details",
-                        style: TextStyle(
-                          color: Styles.yellowy,
-                          fontSize: 24,
-                        ),
+            ),
+            child: Column(
+              children: <Widget>[
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Text(
+                      "Details",
+                      style: TextStyle(
+                        color: Styles.yellowy,
+                        fontSize: 24,
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: ListView(
-                      children: List.generate(
-                        availableDevices.length,
-                        (i) => ListTile(
-                          leading: Icon(
-                            Icons.location_on,
-                            size: 32,
-                            color: Styles.yellowy,
-                          ),
-                          title: Text(
-                            availableDevices[i].name,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          subtitle: Text(availableDevices[i].id.toString()),
-                          onTap: showHistoryOf(availableDevices[i].id),
+                ),
+                Expanded(
+                  child: ListView(
+                    children: List.generate(
+                      availableDevices.length,
+                      (i) => ListTile(
+                        leading: Icon(
+                          Icons.location_on,
+                          size: 32,
+                          color: Styles.yellowy,
                         ),
+                        title: Text(
+                          availableDevices[i].name,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        subtitle: Text(availableDevices[i].id.toString()),
+                        onTap: () {
+                          Navigator.pop(context);
+                          showHistoryOf(context, availableDevices[i].id);
+                        },
                       ),
                     ),
-                  )
-                ],
-              ),
+                  ),
+                )
+              ],
             ),
-          );
-        });
+          ),
+        );
+      },
+      backgroundColor: Colors.transparent,
+    );
   }
 
-  showHistoryOf(int id) {
-    
+  showHistoryOf(BuildContext context, int id) {
+    Scaffold.of(context).showBottomSheet((context) {
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: 10),
+        decoration: BoxDecoration(
+          color: Styles.nearlyWhite,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(10),
+            topRight: Radius.circular(10),
+          ),
+        ),
+        height: MediaQuery.of(context).size.height / 6,
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: Text(
+                "Déjà Vu - ${id.toString()}",
+                style: TextStyle(
+                  color: Styles.yellowy,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: RangeSlider(
+                inactiveColor: Styles.nearlyBlack,
+                activeColor: Styles.yellowy,
+                labels: RangeLabels("Start", "End"),
+                divisions: 1,
+                onChanged: (value) => {},
+                min: -30,
+                max: -1,
+                values: RangeValues(-10, -1),
+              ),
+            ),
+          ],
+        ),
+      );
+    }, backgroundColor: Colors.transparent);
   }
 }
