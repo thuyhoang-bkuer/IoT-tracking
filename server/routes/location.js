@@ -27,15 +27,27 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.get('/:userId', async (req, res) => {
+router.get('/:deviceId', async (req, res) => {
     try {
-        const locations = await Location.find({'user': req.params.userId})
-        res.json(locations);   
+        const locations = await Location.find({'deviceId': req.params.deviceId});  
+        var output = [];
+
+        for (var i = 0; i < locations.length; i++) {
+            const loc_lat_long = await Coordinate.findById(locations[i].coordinate);
+            output[i] = {
+                deviceId: locations[i].deviceId,
+                latitude: loc_lat_long.latitude,
+                longitude: loc_lat_long.longitude,
+                timestamp: locations[i].timestamp,
+                user: locations[i].user 
+            };
+        }
+        console.log(output)
+        res.json(output);   
     } catch (error) {
         res.json({message: error});
     }
 });
-
 // router.delete('/:postId', async (req, res) => {
 //     try {
 //         const removedPost = await Location.remove({_id: req.params.postId});
