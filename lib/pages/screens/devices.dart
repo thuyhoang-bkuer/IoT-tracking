@@ -21,12 +21,11 @@ class _DeviceScreenState extends State<DeviceScreen> {
         listeners: [
           BlocListener<DeviceBloc, DeviceState>(
             listener: (context, state) {
-              log(state.toString());
               if (state is DeviceError) {
                 Scaffold.of(context).showSnackBar(
                   SnackBar(
                     content: Text(state.error),
-                    duration: Duration(seconds: 3),
+                    duration: Duration(seconds: 1),
                   ),
                 );
               }

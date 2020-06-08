@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tracking_app/blocs/device_bloc.dart';
+import 'package:tracking_app/blocs/_.dart';
 import 'package:tracking_app/data/device_repository.dart';
 import 'package:tracking_app/models/_.dart';
 import 'package:tracking_app/pages/screens/_.dart';
@@ -54,6 +54,9 @@ class _HomePageState extends State<HomePage> {
         BlocProvider(
           create: (context) => DeviceBloc(new LocalDeviceRepository()),
         ),
+        BlocProvider(
+          create: (context) => HistoryBloc(new LocalDeviceRepository()),
+        )
       ],
       child: Scaffold(
         appBar: PreferredSize(

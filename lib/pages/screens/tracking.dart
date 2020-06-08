@@ -1,12 +1,13 @@
 import 'dart:async';
-
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import 'package:tracking_app/blocs/_.dart';
-import 'package:tracking_app/models/device.dart';
-import 'package:tracking_app/models/enums.dart';
+import 'package:tracking_app/models/_.dart';
+import 'package:tracking_app/utils/_.dart';
 import 'package:tracking_app/styles/index.dart';
 
 class TrackingScreen extends StatefulWidget {
@@ -17,18 +18,21 @@ class TrackingScreen extends StatefulWidget {
   _TrackingScreenState createState() => _TrackingScreenState();
 }
 
+enum ModalKind { None, Idle, HistoryBoard, HistoryDetail }
+
 class _TrackingScreenState extends State<TrackingScreen>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
   GoogleMapController _googleController;
-  bool hasModal;
-  Timer interval;
+  ModalKind _modal;
+  RangeValues _period;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
-    hasModal = false;
+    _modal = ModalKind.None;
+    _period = RangeValues(-1440.0, 0.0);
   }
 
   @override
@@ -39,8 +43,38 @@ class _TrackingScreenState extends State<TrackingScreen>
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<DeviceBloc, DeviceState>(
-      listener: (context, state) {},
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<DeviceBloc, DeviceState>(
+          listener: (context, state) {
+            log(state.toString());
+            if (state is DeviceError) {
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.error),
+                  duration: Duration(seconds: 1),
+                ),
+              );
+            }
+          },
+        ),
+        BlocListener<HistoryBloc, HistoryState>(
+          listener: (context, state) {
+            log(state.toString());
+            Scaffold.of(context).showBodyScrim(false, 0.65);
+            if (state is HistoryError) {
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.error),
+                  duration: Duration(seconds: 1),
+                ),
+              );
+            } else if (state is HistoryLoading) {
+              Scaffold.of(context).showBodyScrim(true, 0.65);
+            }
+          },
+        )
+      ],
       child: BlocBuilder<DeviceBloc, DeviceState>(
         builder: (context, state) {
           Widget body;
@@ -60,14 +94,17 @@ class _TrackingScreenState extends State<TrackingScreen>
           return Scaffold(
             body: body,
             floatingActionButton: isFabEnable
-                ? hasModal
+                ? _modal == ModalKind.HistoryBoard ||
+                        _modal == ModalKind.HistoryDetail
                     ? Builder(
                         builder: (context) => FloatingActionButton(
                           onPressed: () {
-                            setState(() {
-                              hasModal = false;
-                            });
+                            if (_modal == ModalKind.HistoryDetail) {
+                              BlocProvider.of<HistoryBloc>(context)
+                                  .add(EraseHistory());
+                            }
                             Navigator.pop(context);
+                            setState(() => _modal = ModalKind.Idle);
                           },
                           elevation: 1,
                           focusElevation: 0,
@@ -84,12 +121,10 @@ class _TrackingScreenState extends State<TrackingScreen>
                     : Builder(
                         builder: (context) => FloatingActionButton(
                           onPressed: () {
-                            setState(() {
-                              hasModal = true;
-                            });
+                            setState(() => _modal = ModalKind.HistoryBoard);
                             toggleHistoryBoard(context, state);
                           },
-                          elevation: 1,
+                          elevation: 2,
                           focusElevation: 0,
                           highlightElevation: 0,
                           backgroundColor: Styles.yellowy,
@@ -108,33 +143,99 @@ class _TrackingScreenState extends State<TrackingScreen>
     );
   }
 
-  Widget _mapView(BuildContext context, DeviceState state) {
-    return GoogleMap(
-      initialCameraPosition: CameraPosition(
-          target:
-              LatLng(widget.constant['latitude'], widget.constant['longitude']),
-          zoom: widget.constant['zoom']),
-      markers: state.devices == null ? Set() : _retriveAllPoints(state.devices),
-      onMapCreated: (GoogleMapController controller) {
-        setState(() {
-          this._googleController = controller;
-        });
-      },
-      zoomControlsEnabled: false,
-    );
-  }
+  Widget _mapView(BuildContext context, DeviceState deviceState) {
+    return BlocBuilder<HistoryBloc, HistoryState>(
+      builder: (context, state) {
+        Set<Marker> markers;
+        Set<Polyline> polylines;
 
-  Set<Marker> _retriveAllPoints(List<Device> devices) {
-    return devices.where((device) => device.status == Power.On).map((device) {
-      final LatLng latLng =
-          LatLng(device.position.latitude, device.position.longitude);
-      return Marker(
-        markerId: MarkerId(device.id.toString()),
-        position: latLng,
-        draggable: false,
-        infoWindow: InfoWindow(title: "${device.id}"),
-      );
-    }).toSet();
+        if (state is HistoryInitial || state is HistoryError) {
+          markers = HistoryUtils.retriveAllPoints(
+            context,
+            deviceState.devices,
+            (device) {
+              setState(() => _modal = ModalKind.HistoryDetail);
+              BlocProvider.of<HistoryBloc>(context)
+                  .add(FetchHistory(payload: {"deviceId": device.id}));
+              showHistoryOf(context, device.id);
+            },
+          );
+          polylines = Set();
+          _googleController?.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                  target: LatLng(widget.constant['latitude'],
+                      widget.constant['longitude']),
+                  zoom: widget.constant['zoom']),
+            ),
+          );
+        } else if (state is HistoryLoading) {
+          markers = HistoryUtils.retriveAllPoints(
+            context,
+            deviceState.devices.where((d) => d.id == state.deviceId).toList(),
+            (device) {
+              setState(() => _modal = ModalKind.HistoryDetail);
+              BlocProvider.of<HistoryBloc>(context)
+                  .add(FetchHistory(payload: {"deviceId": device.id}));
+              showHistoryOf(context, device.id);
+            },
+          );
+          polylines = Set();
+        } else if (state is HistoryLoaded) {
+          final points = state.history.positions
+              .map((p) => LatLng(p.latitude, p.longitude))
+              .toList();
+          markers = Set();
+          polylines = Set()
+            ..add(
+              Polyline(
+                polylineId: PolylineId(state.deviceId.toString()),
+                points: points,
+                startCap: Cap.roundCap,
+                endCap: Cap.roundCap,
+                color: Styles.yellowy,
+              ),
+            );
+          _googleController?.animateCamera(CameraUpdate.newLatLngBounds(
+              HistoryUtils.retriveBoundOf(points), 120));
+        } else if (state is HistorySliced) {
+          final points = state.sliced.positions
+              .map((p) => LatLng(p.latitude, p.longitude))
+              .toList();
+          markers = Set();
+          polylines = points.length == 0
+              ? Set()
+              : Set.from(
+                  [
+                    Polyline(
+                      polylineId: PolylineId(state.deviceId.toString()),
+                      points: points,
+                      startCap: Cap.roundCap,
+                      endCap: Cap.roundCap,
+                      color: Styles.yellowy,
+                    ),
+                  ],
+                );
+        } else
+          throw Error;
+
+        return GoogleMap(
+          initialCameraPosition: CameraPosition(
+              target: LatLng(
+                  widget.constant['latitude'], widget.constant['longitude']),
+              zoom: widget.constant['zoom']),
+          markers: markers,
+          polylines: polylines,
+          onMapCreated: (GoogleMapController controller) {
+            setState(() {
+              this._googleController = controller;
+            });
+          },
+          myLocationButtonEnabled: false,
+          onCameraMove: (position) {},
+        );
+      },
+    );
   }
 
   Widget _loadingView(BuildContext context, DeviceState state) {
@@ -169,7 +270,7 @@ class _TrackingScreenState extends State<TrackingScreen>
     );
   }
 
-  void toggleHistoryBoard(BuildContext context, DeviceState state) {
+  toggleHistoryBoard(BuildContext context, DeviceState state) {
     final availableDevices =
         state.devices.where((device) => device.status == Power.On).toList();
 
@@ -220,7 +321,12 @@ class _TrackingScreenState extends State<TrackingScreen>
                         ),
                         subtitle: Text(availableDevices[i].id.toString()),
                         onTap: () {
+                          setState(() => _modal = ModalKind.HistoryDetail);
                           Navigator.pop(context);
+                          BlocProvider.of<HistoryBloc>(context).add(
+                              FetchHistory(payload: {
+                            "deviceId": availableDevices[i].id
+                          }));
                           showHistoryOf(context, availableDevices[i].id);
                         },
                       ),
@@ -238,43 +344,98 @@ class _TrackingScreenState extends State<TrackingScreen>
 
   showHistoryOf(BuildContext context, int id) {
     Scaffold.of(context).showBottomSheet((context) {
-      return Container(
-        margin: EdgeInsets.symmetric(horizontal: 10),
-        decoration: BoxDecoration(
-          color: Styles.nearlyWhite,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(10),
-            topRight: Radius.circular(10),
-          ),
-        ),
-        height: MediaQuery.of(context).size.height / 6,
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Text(
-                "Déjà Vu - Device ${id.toString()}",
-                style: TextStyle(
-                  color: Styles.yellowy,
-                  fontSize: 24,
+      return BlocBuilder<HistoryBloc, HistoryState>(
+        builder: (context, state) {
+          Widget child;
+          if (state is HistoryLoading ||
+              state is HistoryInitial ||
+              state is HistoryError) {
+            child = Center(
+              child: SpinKitDoubleBounce(
+                color: Styles.yellowy,
+                size: 32,
+              ),
+            );
+          } else if (state is HistoryLoaded || state is HistorySliced) {
+            final latest = state.positions.last;
+            child = Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: Text(
+                    "Déjà Vu - Device ${id.toString()}",
+                    style: TextStyle(
+                      color: Styles.yellowy,
+                      fontSize: 24,
+                    ),
+                  ),
                 ),
+                RaisedButton(
+                  elevation: 2,
+                  highlightElevation: 0,
+                  color: Styles.yellowy,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(28),
+                  ),
+                  child: SizedBox(
+                    height: 48,
+                    width: 96,
+                    child: Center(
+                      child: Icon(
+                        Icons.refresh,
+                        size: 24,
+                        color: Styles.nearlyWhite,
+                      ),
+                    ),
+                  ),
+                  onPressed: () {
+                    BlocProvider.of<HistoryBloc>(context).add(
+                      SliceHistory(
+                        latest.timestamp
+                            .add(Duration(minutes: _period.start.toInt())),
+                        latest.timestamp
+                            .add(Duration(minutes: _period.end.toInt())),
+                      ),
+                    );
+                  },
+                ),
+                StatefulBuilder(
+                  builder: (context, setState) {
+                    return RangeSlider(
+                      inactiveColor: Styles.nearlyBlack,
+                      activeColor: Styles.yellowy,
+                      labels: RangeLabels(
+                        '${HistoryUtils.retriveDate(latest.timestamp, _period.start)}',
+                        '${HistoryUtils.retriveDate(latest.timestamp, _period.end)}',
+                      ),
+                      divisions: 144,
+                      onChanged: (value) {
+                        setState(() => _period = value);
+                      },
+                      min: -1440.0,
+                      max: 0,
+                      values: _period,
+                    );
+                  },
+                ),
+              ],
+            );
+          }
+
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(
+              color: Styles.nearlyWhite,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: RangeSlider(
-                inactiveColor: Styles.nearlyBlack,
-                activeColor: Styles.yellowy,
-                labels: RangeLabels("Start", "End"),
-                divisions: 1,
-                onChanged: (value) => {},
-                min: -30,
-                max: -1,
-                values: RangeValues(-10, -1),
-              ),
-            ),
-          ],
-        ),
+            height: MediaQuery.of(context).size.height / 4,
+            child: child,
+          );
+        },
       );
     }, backgroundColor: Colors.transparent);
   }

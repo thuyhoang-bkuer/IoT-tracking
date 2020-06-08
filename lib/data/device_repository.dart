@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:math';
 
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:tracking_app/models/_.dart';
 
@@ -8,7 +10,7 @@ abstract class DeviceRepository {
 
   // Retrive from database
   Future<List<Device>> fetchDevices();
-  // Future<List<Position>> fetchHistory(int deviceId);
+  Future<History> fetchHistory(int deviceId);
 
   // // Store app's state into database
   // Future<void> putDevice(String topic, String payload);
@@ -43,24 +45,21 @@ class LocalDeviceRepository extends DeviceRepository {
     });
   }
 
-  Future<List<Position>> fetchHistory(int deviceId) {
-    return Future.delayed(Duration(seconds: 1), () {
-      final random = Random();
+  @override
+  Future<History> fetchHistory(int deviceId) async {
+    final jsonData = await rootBundle.loadString('assets/storage/history.json');
+    final jsonMap = json.decode(jsonData);
 
-      // Simulate some network error
-      if (random.nextBool()) {
-        throw NetworkError();
-      }
+    final history = History.fromJson(jsonMap);
 
-      var noDevices = random.nextInt(10);
-      return List.generate(
-        noDevices,
-        (index) => Position(
-          longitude: random.nextDouble() * 0.001 + 106.6,
-          latitude: random.nextDouble() * 0.001 + 10.7,
-          timestamp: DateTime.now(),
-        ),
-      );
+    return Future.delayed(Duration(seconds: 3), () {
+      // final random = Random();
+      // // Simulate some network error
+      // if (random.nextBool()) {
+      //   throw NetworkError();
+      // }
+
+      return history;
     });
   }
 }
