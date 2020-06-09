@@ -6,7 +6,7 @@ class Styles {
 
   static const Color blueky = Color(0xFF4285F4);
   static const Color reddy = Color(0xFFDB4437);
-  static const Color greeny = Color(0xFF0F9D58);
+  static const Color greeny = Color(0xFF319B7F);
   static const Color yellowy = Color(0xFFF4B400);
 
   static const Color nearlyWhite = Color(0xFFFEFEFE);

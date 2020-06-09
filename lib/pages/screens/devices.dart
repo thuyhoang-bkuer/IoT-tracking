@@ -7,7 +7,9 @@ import 'package:tracking_app/styles/index.dart';
 import 'package:tracking_app/widgets/sliding_card.dart';
 
 class DeviceScreen extends StatefulWidget {
-  final Color primaryColor = Styles.greeny;
+  final Color primaryColor;
+
+  const DeviceScreen({Key key, this.primaryColor}) : super(key: key);
 
   @override
   _DeviceScreenState createState() => _DeviceScreenState();

@@ -12,7 +12,9 @@ import 'package:tracking_app/styles/index.dart';
 
 class TrackingScreen extends StatefulWidget {
   final constant = {'latitude': 10.81, 'longitude': 106.65, 'zoom': 12.3};
-  final primaryColor = Styles.blueky;
+  final Color primaryColor;
+
+  TrackingScreen({Key key, this.primaryColor}) : super(key: key);
 
   @override
   _TrackingScreenState createState() => _TrackingScreenState();
@@ -109,13 +111,13 @@ class _TrackingScreenState extends State<TrackingScreen>
                           elevation: 1,
                           focusElevation: 0,
                           highlightElevation: 0,
-                          backgroundColor: Styles.yellowy,
+                          backgroundColor: widget.primaryColor,
                           child: Icon(
                             Icons.close,
                             size: 24,
                             color: Styles.nearlyWhite,
                           ),
-                          splashColor: Styles.yellowy,
+                          splashColor: widget.primaryColor,
                         ),
                       )
                     : Builder(
@@ -127,13 +129,13 @@ class _TrackingScreenState extends State<TrackingScreen>
                           elevation: 2,
                           focusElevation: 0,
                           highlightElevation: 0,
-                          backgroundColor: Styles.yellowy,
+                          backgroundColor: widget.primaryColor,
                           child: Icon(
                             Icons.history,
                             size: 24,
                             color: Styles.nearlyWhite,
                           ),
-                          splashColor: Styles.yellowy,
+                          splashColor: widget.primaryColor,
                         ),
                       )
                 : null,
@@ -193,7 +195,7 @@ class _TrackingScreenState extends State<TrackingScreen>
                 points: points,
                 startCap: Cap.roundCap,
                 endCap: Cap.roundCap,
-                color: Styles.yellowy,
+                color: widget.primaryColor,
               ),
             );
           _googleController?.animateCamera(CameraUpdate.newLatLngBounds(
@@ -212,7 +214,7 @@ class _TrackingScreenState extends State<TrackingScreen>
                       points: points,
                       startCap: Cap.roundCap,
                       endCap: Cap.roundCap,
-                      color: Styles.yellowy,
+                      color: widget.primaryColor,
                     ),
                   ],
                 );
@@ -296,7 +298,7 @@ class _TrackingScreenState extends State<TrackingScreen>
                     child: Text(
                       "Details",
                       style: TextStyle(
-                        color: Styles.yellowy,
+                        color: widget.primaryColor,
                         fontSize: 24,
                       ),
                     ),
@@ -310,7 +312,7 @@ class _TrackingScreenState extends State<TrackingScreen>
                         leading: Icon(
                           Icons.location_on,
                           size: 32,
-                          color: Styles.yellowy,
+                          color: widget.primaryColor,
                         ),
                         title: Text(
                           availableDevices[i].name,
@@ -352,7 +354,7 @@ class _TrackingScreenState extends State<TrackingScreen>
               state is HistoryError) {
             child = Center(
               child: SpinKitDoubleBounce(
-                color: Styles.yellowy,
+                color: widget.primaryColor,
                 size: 32,
               ),
             );
@@ -366,7 +368,7 @@ class _TrackingScreenState extends State<TrackingScreen>
                   child: Text(
                     "Déjà Vu - Device ${id.toString()}",
                     style: TextStyle(
-                      color: Styles.yellowy,
+                      color: widget.primaryColor,
                       fontSize: 24,
                     ),
                   ),
@@ -374,7 +376,7 @@ class _TrackingScreenState extends State<TrackingScreen>
                 RaisedButton(
                   elevation: 2,
                   highlightElevation: 0,
-                  color: Styles.yellowy,
+                  color: widget.primaryColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(28),
                   ),
@@ -404,7 +406,7 @@ class _TrackingScreenState extends State<TrackingScreen>
                   builder: (context, setState) {
                     return RangeSlider(
                       inactiveColor: Styles.nearlyBlack,
-                      activeColor: Styles.yellowy,
+                      activeColor: widget.primaryColor,
                       labels: RangeLabels(
                         '${HistoryUtils.retriveDate(latest.timestamp, _period.start)}',
                         '${HistoryUtils.retriveDate(latest.timestamp, _period.end)}',
