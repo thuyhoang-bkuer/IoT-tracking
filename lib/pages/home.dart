@@ -20,7 +20,7 @@ class HomePage extends StatefulWidget {
     AnimatedItem(
       text: "Track",
       iconData: Icons.gps_fixed,
-      color: Styles.yellowy,
+      color: Styles.greeny,
       screen: TrackingScreen(),
       fontSize: 18,
     ),
@@ -39,8 +39,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _pageIndex;
-  List<Device> devices = [Device(id: 1234, name: 'World_One')];
-
   @override
   void initState() {
     super.initState();
@@ -61,11 +59,17 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(60),
-          child: TitleBar(primaryColor: widget.tabItems[_pageIndex].color),
+          child: TitleBar(
+            primaryColor: widget.tabItems[_pageIndex].color,
+            pageIndex: _pageIndex,
+          ),
         ),
-        body: Container(
-          // create: (context) => HomeBloc(devices),
-          child: widget.tabItems[_pageIndex].screen,
+        body: Stack(
+          children: [
+            _buildOffStageNavigator(0),
+            _buildOffStageNavigator(1),
+            _buildOffStageNavigator(2),
+          ],
         ),
         bottomNavigationBar: AnimatedBottomBar(
           items: widget.tabItems,
@@ -75,6 +79,38 @@ class _HomePageState extends State<HomePage> {
             });
           },
         ),
+      ),
+    );
+  }
+
+  Map<String, WidgetBuilder> _routeBuilders(BuildContext context, int index) {
+    return {
+      '/': (context) {
+        return [
+          DeviceScreen(
+            primaryColor: Styles.greeny,
+          ),
+          TrackingScreen(
+            primaryColor: Styles.greeny,
+          ),
+          SettingScreen(
+            primaryColor: Styles.greeny,
+          )
+        ].elementAt(index);
+      },
+    };
+  }
+
+  Widget _buildOffStageNavigator(int index) {
+    var routeBuilders = _routeBuilders(context, index);
+    return Offstage(
+      offstage: _pageIndex != index,
+      child: Navigator(
+        onGenerateRoute: (routeSettings) {
+          return MaterialPageRoute(
+            builder: (context) => routeBuilders[routeSettings.name](context),
+          );
+        },
       ),
     );
   }
