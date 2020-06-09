@@ -42,6 +42,7 @@ router.get('/:deviceId', async (req, res) => {
                 user: locations[i].user 
             };
         }
+        output.sort((a,b) => (a.timestamp > b.timestamp) ? 1 : ((b.timestamp > a.timestamp) ? -1 : 0)); 
         console.log(output)
         res.json(output);   
     } catch (error) {
