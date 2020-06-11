@@ -5,6 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:tracking_app/blocs/_.dart';
 import 'package:tracking_app/styles/index.dart';
 import 'package:tracking_app/widgets/sliding_card.dart';
+import 'package:tracking_app/widgets/title_bar.dart';
 
 class DeviceScreen extends StatefulWidget {
   final Color primaryColor;
@@ -18,8 +19,15 @@ class DeviceScreen extends StatefulWidget {
 class _DeviceScreenState extends State<DeviceScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: MultiBlocListener(
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60),
+        child: TitleBar(
+          primaryColor: widget.primaryColor,
+          pageIndex: 0,
+        ),
+      ),
+      body: MultiBlocListener(
         listeners: [
           BlocListener<DeviceBloc, DeviceState>(
             listener: (context, state) {

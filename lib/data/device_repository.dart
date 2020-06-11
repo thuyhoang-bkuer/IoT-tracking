@@ -10,7 +10,8 @@ abstract class DeviceRepository {
 
   // Retrive from database
   Future<List<Device>> fetchDevices();
-  Future<History> fetchHistory(int deviceId);
+  Future<History> fetchHistory(String deviceId);
+  Future<List<Privacy>> fetchPrivacy(String deviceId);
 
   // // Store app's state into database
   // Future<void> putDevice(String topic, String payload);
@@ -46,7 +47,7 @@ class LocalDeviceRepository extends DeviceRepository {
   }
 
   @override
-  Future<History> fetchHistory(int deviceId) async {
+  Future<History> fetchHistory(String deviceId) async {
     final jsonData = await rootBundle.loadString('assets/storage/history.json');
     final jsonMap = json.decode(jsonData);
 
@@ -60,6 +61,17 @@ class LocalDeviceRepository extends DeviceRepository {
       // }
 
       return history;
+    });
+  }
+
+  @override
+  Future<List<Privacy>> fetchPrivacy(String deviceId) async {
+    final jsonData = await rootBundle.loadString('assets/storage/privacy.json');
+    final jsonMap = json.decode(jsonData);
+
+    final privacy = Privacy.fromMaps(jsonMap['policies']);
+    return Future.delayed(Duration(seconds: 1), () {
+      return privacy;
     });
   }
 }

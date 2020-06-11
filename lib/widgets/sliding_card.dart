@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracking_app/blocs/_.dart';
 import 'package:tracking_app/models/_.dart';
+import 'package:tracking_app/pages/screens/privacy.dart';
 import 'package:tracking_app/styles/index.dart';
 
 class SlidingCard extends StatefulWidget {
@@ -139,7 +140,7 @@ class _SlidingCardState extends State<SlidingCard> {
 
     Widget _sliderContent(BuildContext context, DeviceState state) {
       return IgnorePointer(
-        ignoring: true,
+        ignoring: state.devices[widget.index].status == Power.Off,
         child: Stack(
           alignment: Alignment.center,
           children: <Widget>[
@@ -182,12 +183,30 @@ class _SlidingCardState extends State<SlidingCard> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        state.devices[widget.index].name,
-                        style: TextStyle(
-                          color: Styles.nearlyBlack,
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w700,
+                      FlatButton(
+                        onPressed: () {
+                          BlocProvider.of<PrivacyBloc>(context).add(
+                            FetchPrivacy(
+                              null,
+                              {'deviceId': state.devices[widget.index].id},
+                            ),
+                          );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PrivacyScreen(
+                                deviceId: '${state.devices[widget.index].name}',
+                              ),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          state.devices[widget.index].name,
+                          style: TextStyle(
+                            color: Styles.nearlyBlack,
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                       Text(

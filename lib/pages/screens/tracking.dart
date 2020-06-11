@@ -9,6 +9,7 @@ import 'package:tracking_app/blocs/_.dart';
 import 'package:tracking_app/models/_.dart';
 import 'package:tracking_app/utils/_.dart';
 import 'package:tracking_app/styles/index.dart';
+import 'package:tracking_app/widgets/title_bar.dart';
 
 class TrackingScreen extends StatefulWidget {
   final constant = {'latitude': 10.81, 'longitude': 106.65, 'zoom': 12.3};
@@ -94,6 +95,13 @@ class _TrackingScreenState extends State<TrackingScreen>
             throw Error;
 
           return Scaffold(
+            appBar: PreferredSize(
+              preferredSize: Size.fromHeight(60),
+              child: TitleBar(
+                primaryColor: widget.primaryColor,
+                pageIndex: 1,
+              ),
+            ),
             body: body,
             floatingActionButton: isFabEnable
                 ? _modal == ModalKind.HistoryBoard ||
@@ -198,8 +206,12 @@ class _TrackingScreenState extends State<TrackingScreen>
                 color: widget.primaryColor,
               ),
             );
-          _googleController?.animateCamera(CameraUpdate.newLatLngBounds(
-              HistoryUtils.retriveBoundOf(points), 120));
+          _googleController?.animateCamera(
+            CameraUpdate.newLatLngBounds(
+              HistoryUtils.retriveBoundOf(points),
+              120,
+            ),
+          );
         } else if (state is HistorySliced) {
           final points = state.sliced.positions
               .map((p) => LatLng(p.latitude, p.longitude))
@@ -224,7 +236,9 @@ class _TrackingScreenState extends State<TrackingScreen>
         return GoogleMap(
           initialCameraPosition: CameraPosition(
               target: LatLng(
-                  widget.constant['latitude'], widget.constant['longitude']),
+                widget.constant['latitude'],
+                widget.constant['longitude'],
+              ),
               zoom: widget.constant['zoom']),
           markers: markers,
           polylines: polylines,

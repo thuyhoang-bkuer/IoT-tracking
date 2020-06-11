@@ -54,16 +54,12 @@ class _HomePageState extends State<HomePage> {
         ),
         BlocProvider(
           create: (context) => HistoryBloc(new LocalDeviceRepository()),
+        ),
+        BlocProvider(
+          create: (context) => PrivacyBloc(new LocalDeviceRepository()),
         )
       ],
       child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(60),
-          child: TitleBar(
-            primaryColor: widget.tabItems[_pageIndex].color,
-            pageIndex: _pageIndex,
-          ),
-        ),
         body: Stack(
           children: [
             _buildOffStageNavigator(0),

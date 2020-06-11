@@ -13,9 +13,9 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
-  @override
   String name_user = "Bá Anh Bùi";
   String email = "buibaanh0405@gmail.com";
+  
   Container buildContent(
     IconData icon,
     String label,
@@ -94,6 +94,7 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
