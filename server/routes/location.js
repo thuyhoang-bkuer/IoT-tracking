@@ -18,15 +18,17 @@ router.post('/', async (req, res) => {
         longitude: req.body.longitude,
         latitude: req.body.latitude
     })
+    var recent_coor_id; 
+    const saveCoor = await coordinate.save(function(err,room){
+            recent_coor_id = room._id;
+        }        
+    );
 
-    const saveCoor = await coordinate.save();
-
-    const recent_coor = await Coordinate.find({'longitude': req.body.longitude, 'latitude': req.body.latitude});  
-    console.log(recent_coor);
+    //const recent_coor = await Coordinate.find({'longitude': req.body.longitude, 'latitude': req.body.latitude});  
     const location = new Location({
         deviceId: req.body.deviceId,
         timestamp: req.body.timestamp,
-        coordinate: recent_coor._id,
+        coordinate: recent_coor_id,
         user: req.body.user
     });
     try {

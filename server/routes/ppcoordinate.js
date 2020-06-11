@@ -27,7 +27,7 @@ router.post('/', async (req, res) => {
 
 router.get('/:policyId', async (req, res) => {
     try {
-        const coordinates = await PPCoor.findOne({'ppid': req.params.policyId})
+        const coordinates = await PPCoor.find({'ppid': req.params.policyId})
         res.json(coordinates);   
     } catch (error) {
         res.json({message: error});
