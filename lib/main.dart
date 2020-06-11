@@ -4,45 +4,41 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tracking_app/pages/_.dart';
 import 'package:tracking_app/styles/index.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tracking_app/user_repository/_.dart';
+import 'package:tracking_app/blocs/authentication/_.dart';
 
-void main() => runApp(App());
-
-class App extends StatelessWidget {
-  // This widget is the root of your application.
+class SimpleBlocDelegate extends BlocDelegate {
   @override
-  Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-      statusBarBrightness: Platform.isAndroid ? Brightness.dark : Brightness.light,
-      systemNavigationBarColor: Colors.white,
-      systemNavigationBarDividerColor: Colors.grey,
-      systemNavigationBarIconBrightness: Brightness.dark,
-    ));
-    return MaterialApp(
-      title: 'iTracking',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-        textTheme: Styles.textTheme
-      ),
-      home: MainPage(),
-    );
+  void onEvent(Bloc bloc, Object event) {
+    print(event);
+    super.onEvent(bloc, event);
+  }
+
+  @override
+  void onTransition(Bloc bloc, Transition transition) {
+    print(transition);
+    super.onTransition(bloc, transition);
+  }
+
+  @override
+  void onError(Bloc bloc, Object error, StackTrace stackTrace) {
+    print(error);
+    super.onError(bloc, error, stackTrace);
   }
 }
 
-class MainPage extends StatefulWidget {
-
-  @override
-  _MainPageState createState() => _MainPageState();
+void main() {
+  BlocSupervisor.delegate = SimpleBlocDelegate();
+  final userRepository = UserRepository();
+  runApp(
+    BlocProvider<AuthenticationBloc>(
+      create: (context) {
+        return AuthenticationBloc(userRepository: userRepository)
+          ..add(AppStart());
+      },
+      child: App(userRepository: userRepository),
+    ),
+  );
 }
 
-class _MainPageState extends State<MainPage> {
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: HomePage(),
-    );
-  }
-}
