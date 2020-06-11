@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Location = require('../models/Location');
+const Coordinate = require('../models/Coordinate');
+const request = require('request');
 router.get('/', async (req,res) => {
     try{
         const locations = await Location.find();
@@ -12,10 +14,19 @@ router.get('/', async (req,res) => {
 });
 
 router.post('/', async (req, res) => {
+    const coordinate = new Coordinate({
+        longitude: req.body.longitude,
+        latitude: req.body.latitude
+    })
+
+    const saveCoor = await coordinate.save();
+
+    const recent_coor = await Coordinate.find({'longitude': req.body.longitude, 'latitude': req.body.latitude});  
+    console.log(recent_coor);
     const location = new Location({
         deviceId: req.body.deviceId,
         timestamp: req.body.timestamp,
-        coordinate: req.body.coordinate,
+        coordinate: recent_coor._id,
         user: req.body.user
     });
     try {
@@ -49,6 +60,7 @@ router.get('/:deviceId', async (req, res) => {
         res.json({message: error});
     }
 });
+
 // router.delete('/:postId', async (req, res) => {
 //     try {
 //         const removedPost = await Location.remove({_id: req.params.postId});
