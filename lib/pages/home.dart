@@ -54,6 +54,9 @@ class _HomePageState extends State<HomePage> {
         ),
         BlocProvider(
           create: (context) => HistoryBloc(new SemiRemoteDeviceRepository()),
+        ),
+        BlocProvider(
+          create: (context) => PrivacyBloc(new LocalDeviceRepository()),
         )
       ],
       child: Scaffold(

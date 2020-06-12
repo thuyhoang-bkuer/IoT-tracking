@@ -208,6 +208,7 @@ class _SlidingCardState extends State<SlidingCard> {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
+                        splashColor: Colors.transparent,
                       ),
                       Text(
                         state.devices[widget.index].id.toString(),

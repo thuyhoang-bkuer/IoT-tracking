@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tracking_app/pages/screens/setting_account.dart';
 import 'package:tracking_app/pages/screens/setting_device.dart';
 import 'package:tracking_app/pages/screens/setting_info.dart';
+import 'package:tracking_app/widgets/title_bar.dart';
 
 class SettingScreen extends StatefulWidget {
   final Color primaryColor;
@@ -15,7 +16,7 @@ class SettingScreen extends StatefulWidget {
 class _SettingScreenState extends State<SettingScreen> {
   String name_user = "Bá Anh Bùi";
   String email = "buibaanh0405@gmail.com";
-  
+
   Container buildContent(
     IconData icon,
     String label,
@@ -102,6 +103,52 @@ class _SettingScreenState extends State<SettingScreen> {
         padding: const EdgeInsets.only(top: 20),
         child: Column(
           children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      child: Icon(
+                        Icons.location_on,
+                        color: widget.primaryColor,
+                        size: 36,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 5,
+                    child: Container(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Text(
+                        "Tracking Lover",
+                        style: TextStyle(
+                          color: widget.primaryColor,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: "Roboto",
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: SizedBox(),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: IconButton(
+                      padding: EdgeInsets.all(0),
+                      icon: Icon(Icons.help),
+                      color: widget.primaryColor,
+                      iconSize: 36,
+                      onPressed: () => null,
+                    ),
+                  )
+                ],
+              ),
+            ),
             Container(
               height: 66,
               margin: const EdgeInsets.only(bottom: 16),
