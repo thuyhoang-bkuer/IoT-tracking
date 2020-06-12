@@ -88,13 +88,19 @@ class SemiRemoteDeviceRepository extends DeviceRepository {
   @override
   Future<History> fetchHistory(String deviceId) async {
   
-    final url = baseUrl + '/$deviceId';
+    final url = baseUrl + 'location/$deviceId';
     final headers = {"Content-type": "application/json"};
     final response = await get(url, headers: headers);
-    if (response.statusCode == 200) {
-      return History.fromJson(json.decode(response.body));
+
+    try {
+      if (response.statusCode == 200) {
+        return History.fromJson(json.decode(response.body));
+      }
+      else throw NetworkError();
     }
-    else throw NetworkError();
+    on Error {
+      throw Error;
+    }
   }
 
   @override
