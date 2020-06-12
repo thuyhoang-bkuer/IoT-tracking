@@ -12,7 +12,7 @@ import 'package:tracking_app/styles/index.dart';
 import 'package:tracking_app/widgets/title_bar.dart';
 
 class TrackingScreen extends StatefulWidget {
-  final constant = {'latitude': 10.81, 'longitude': 106.65, 'zoom': 12.3};
+  final constant = {'latitude': 10.81, 'longitude': 106.65, 'zoom': 11.0};
   final Color primaryColor;
 
   TrackingScreen({Key key, this.primaryColor}) : super(key: key);
@@ -103,54 +103,68 @@ class _TrackingScreenState extends State<TrackingScreen>
               ),
             ),
             body: body,
-            floatingActionButton: isFabEnable
-                ? _modal == ModalKind.HistoryBoard ||
-                        _modal == ModalKind.HistoryDetail
-                    ? Builder(
-                        builder: (context) => FloatingActionButton(
-                          onPressed: () {
-                            if (_modal == ModalKind.HistoryDetail) {
-                              BlocProvider.of<HistoryBloc>(context)
-                                  .add(EraseHistory());
-                            }
-                            Navigator.pop(context);
-                            setState(() => _modal = ModalKind.Idle);
-                          },
-                          elevation: 1,
-                          focusElevation: 0,
-                          highlightElevation: 0,
-                          backgroundColor: widget.primaryColor,
-                          child: Icon(
-                            Icons.close,
-                            size: 24,
-                            color: Styles.nearlyWhite,
-                          ),
-                          splashColor: widget.primaryColor,
-                        ),
-                      )
-                    : Builder(
-                        builder: (context) => FloatingActionButton(
-                          onPressed: () {
-                            setState(() => _modal = ModalKind.HistoryBoard);
-                            toggleHistoryBoard(context, state);
-                          },
-                          elevation: 2,
-                          focusElevation: 0,
-                          highlightElevation: 0,
-                          backgroundColor: widget.primaryColor,
-                          child: Icon(
-                            Icons.history,
-                            size: 24,
-                            color: Styles.nearlyWhite,
-                          ),
-                          splashColor: widget.primaryColor,
-                        ),
-                      )
-                : null,
+            floatingActionButton:
+                isFabEnable ? _buildFab(context, state) : null,
           );
         },
       ),
     );
+  }
+
+  Widget _buildFab(BuildContext context, DeviceLoaded state) {
+    if (_modal == ModalKind.HistoryBoard || _modal == ModalKind.HistoryDetail)
+      return Builder(
+        builder: (context) => FloatingActionButton(
+          onPressed: () {
+            if (_modal == ModalKind.HistoryDetail) {
+              BlocProvider.of<HistoryBloc>(context).add(EraseHistory());
+              final points = state.devices
+                  .map(
+                    (device) => LatLng(
+                      device.position.latitude,
+                      device.position.longitude,
+                    ),
+                  )
+                  .toList();
+              _googleController?.animateCamera(
+                CameraUpdate.newLatLngBounds(
+                    HistoryUtils.retriveBoundOf(points), 140),
+              );
+            }
+            Navigator.pop(context);
+            setState(() => _modal = ModalKind.Idle);
+          },
+          elevation: 1,
+          focusElevation: 0,
+          highlightElevation: 0,
+          backgroundColor: widget.primaryColor,
+          child: Icon(
+            Icons.close,
+            size: 24,
+            color: Styles.nearlyWhite,
+          ),
+          splashColor: widget.primaryColor,
+        ),
+      );
+    else
+      return Builder(
+        builder: (context) => FloatingActionButton(
+          onPressed: () {
+            setState(() => _modal = ModalKind.HistoryBoard);
+            toggleHistoryBoard(context, state);
+          },
+          elevation: 2,
+          focusElevation: 0,
+          highlightElevation: 0,
+          backgroundColor: widget.primaryColor,
+          child: Icon(
+            Icons.history,
+            size: 24,
+            color: Styles.nearlyWhite,
+          ),
+          splashColor: widget.primaryColor,
+        ),
+      );
   }
 
   Widget _mapView(BuildContext context, DeviceState deviceState) {
@@ -171,14 +185,17 @@ class _TrackingScreenState extends State<TrackingScreen>
             },
           );
           polylines = Set();
-          _googleController?.animateCamera(
-            CameraUpdate.newCameraPosition(
-              CameraPosition(
-                  target: LatLng(widget.constant['latitude'],
-                      widget.constant['longitude']),
-                  zoom: widget.constant['zoom']),
-            ),
-          );
+          // _googleController?.animateCamera(
+          //   CameraUpdate.newCameraPosition(
+          //     CameraPosition(
+          //       target: LatLng(
+          //         widget.constant['latitude'],
+          //         widget.constant['longitude'],
+          //       ),
+          //       zoom: widget.constant['zoom'],
+          //     ),
+          //   ),
+          // );
         } else if (state is HistoryLoading) {
           markers = HistoryUtils.retriveAllPoints(
             context,
@@ -199,7 +216,7 @@ class _TrackingScreenState extends State<TrackingScreen>
           polylines = Set()
             ..add(
               Polyline(
-                polylineId: PolylineId(state.deviceId.toString()),
+                polylineId: PolylineId(state.deviceId),
                 points: points,
                 startCap: Cap.roundCap,
                 endCap: Cap.roundCap,
@@ -209,7 +226,7 @@ class _TrackingScreenState extends State<TrackingScreen>
           _googleController?.animateCamera(
             CameraUpdate.newLatLngBounds(
               HistoryUtils.retriveBoundOf(points),
-              120,
+              140,
             ),
           );
         } else if (state is HistorySliced) {
@@ -235,11 +252,10 @@ class _TrackingScreenState extends State<TrackingScreen>
 
         return GoogleMap(
           initialCameraPosition: CameraPosition(
-              target: LatLng(
-                widget.constant['latitude'],
-                widget.constant['longitude'],
-              ),
-              zoom: widget.constant['zoom']),
+            target: LatLng(
+                widget.constant['latitude'], widget.constant['longitude']),
+            zoom: widget.constant['zoom'],
+          ),
           markers: markers,
           polylines: polylines,
           onMapCreated: (GoogleMapController controller) {
@@ -247,8 +263,9 @@ class _TrackingScreenState extends State<TrackingScreen>
               this._googleController = controller;
             });
           },
+          zoomControlsEnabled: false,
+          zoomGesturesEnabled: true,
           myLocationButtonEnabled: false,
-          onCameraMove: (position) {},
         );
       },
     );
@@ -267,7 +284,7 @@ class _TrackingScreenState extends State<TrackingScreen>
           child: Icon(
             Icons.location_off,
             size: 128,
-            color: Styles.lightBlack,
+            color: Styles.deactivatedText,
           ),
         ),
         Center(
@@ -340,9 +357,10 @@ class _TrackingScreenState extends State<TrackingScreen>
                           setState(() => _modal = ModalKind.HistoryDetail);
                           Navigator.pop(context);
                           BlocProvider.of<HistoryBloc>(context).add(
-                              FetchHistory(payload: {
-                            "deviceId": availableDevices[i].id
-                          }));
+                            FetchHistory(
+                              payload: {"deviceId": availableDevices[i].id},
+                            ),
+                          );
                           showHistoryOf(context, availableDevices[i].id);
                         },
                       ),
@@ -358,14 +376,12 @@ class _TrackingScreenState extends State<TrackingScreen>
     );
   }
 
-  showHistoryOf(BuildContext context, int id) {
+  showHistoryOf(BuildContext context, String id) {
     Scaffold.of(context).showBottomSheet((context) {
       return BlocBuilder<HistoryBloc, HistoryState>(
         builder: (context, state) {
-          Widget child;
-          if (state is HistoryLoading ||
-              state is HistoryInitial ||
-              state is HistoryError) {
+          Widget child = Center();
+          if (state is HistoryLoading) {
             child = Center(
               child: SpinKitDoubleBounce(
                 color: widget.primaryColor,
@@ -436,6 +452,15 @@ class _TrackingScreenState extends State<TrackingScreen>
                   },
                 ),
               ],
+            );
+          } 
+          else if (state is HistoryError) {
+            child = Center(
+              child: Icon(
+                Icons.error,
+                size: 64,
+                color: Styles.deactivatedText,
+              ),
             );
           }
 

@@ -1,0 +1,59 @@
+{
+	"devices": [
+		{
+			"id": "1000",
+			"status": 1,
+			"name": "GPS-01",
+			"position": {
+				"id": "1000",
+				"latitude": 10.794143,
+				"longitude": 106.663046,
+				"timestamp": null
+			}
+		},
+		{
+			"id": "1001",
+			"status": 1,
+			"name": "GPS-02",
+			"position": {
+				"id": "1001",
+				"latitude": 10.803169,
+				"longitude": 106.692031,
+				"timestamp": null
+			}
+		},
+		{
+			"id": "1002",
+			"status": 1,
+			"name": "GPS-03",
+			"position": {
+				"id": "1002",
+				"latitude": 10.770576,
+				"longitude": 106.658072,
+				"timestamp": null
+			}
+		},
+		{
+			"id": "1003",
+			"status": 1,
+			"name": "GPS-04",
+			"position": {
+				"id": "1003",
+				"latitude": 10.773761,
+				"longitude": 106.689133,
+				"timestamp": null
+			}
+		},
+		{
+			"id": "1004",
+			"status": 1,
+			"name": "GPS-05",
+			"position": {
+				"id": "1004",
+				"latitude": 10.811315,
+				"longitude": 106.714024,
+				"timestamp": null
+			}
+		}
+	]
+}

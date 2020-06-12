@@ -72,7 +72,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
           child: Icon(
             Icons.phonelink_off,
             size: 128,
-            color: Styles.grey,
+            color: Styles.deactivatedText,
           ),
         ),
         Center(

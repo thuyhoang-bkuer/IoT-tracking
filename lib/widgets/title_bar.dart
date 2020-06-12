@@ -78,15 +78,16 @@ class _TitleBarState extends State<TitleBar> {
               onPressed: () {
                 final id = random.nextInt(devices.length);
                 final device = devices[id];
-                final payload = json.encode({
-                  "id": id,
+                final payload = {
+                  "index": id,
+                  "deviceId": device.id, 
                   "latitude": (random.nextDouble() - 0.5) * 0.003 +
                       device.position.latitude,
                   "longitude": (random.nextDouble() - 0.5) * 0.003 +
                       device.position.longitude,
-                });
+                };
                 BlocProvider.of<DeviceBloc>(context).add(
-                  LocateDevice(payload: payload),
+                  SubcribePosition(payload: payload),
                 );
               },
               child: Icon(

@@ -36,6 +36,11 @@ class HistoryUtils {
       }
     });
 
+    if (northeast.longitude - southwest.longitude < 0.01) {
+      southwest = LatLng(southwest.latitude, southwest.longitude - 0.005);
+      northeast = LatLng(northeast.latitude, northeast.longitude + 0.005);
+    }
+
     return LatLngBounds(southwest: southwest, northeast: northeast);
   }
 

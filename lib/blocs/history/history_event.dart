@@ -16,6 +16,13 @@ class FetchHistory extends HistoryEvent {
   List<Object> get props => [topic, payload];
 }
 
+class WriteHistory extends HistoryEvent {
+  WriteHistory(String topic, Map<String, dynamic> payload) : super(topic, payload);
+
+  @override
+  List<Object> get props => [];
+}
+
 
 class EraseHistory extends HistoryEvent {
   EraseHistory() : super(null, {"deviceId": null});
