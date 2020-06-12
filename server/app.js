@@ -1,9 +1,9 @@
 // mongodb+srv://tuan:<password>@cluster0-pqxpc.mongodb.net/test?retryWrites=true&w=majority
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-require('dotenv/config')
 
 app.use(bodyParser.json());
 

@@ -46,7 +46,7 @@ class _SlidingCardState extends State<SlidingCard> {
     // }
 
     switchHandle(bool value) {
-      final String payload = json.encode({"id": widget.index, "status": value});
+      final payload = {"id": widget.index, "status": value};
 
       BlocProvider.of<DeviceBloc>(context).add(PutDevice(payload: payload));
     }

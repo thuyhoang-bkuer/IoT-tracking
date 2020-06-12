@@ -21,10 +21,10 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
   Stream<HistoryState> mapEventToState(
     HistoryEvent event,
   ) async* {
-    yield HistoryLoading(event.payload['deviceId'] ?? -1, state.positions);
+    yield HistoryLoading(event.payload['deviceId'] ?? "", state.positions);
     if (event is FetchHistory) {
       try {
-        final history = await deviceRepository.fetchHistory(0);
+        final history = await deviceRepository.fetchHistory(event.payload['deviceId']);
         yield HistoryLoaded(history);
       } on NetworkError {
         yield HistoryError('An error occurs. Please try again!');

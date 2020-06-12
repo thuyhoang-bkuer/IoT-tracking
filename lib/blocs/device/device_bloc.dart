@@ -26,28 +26,38 @@ class DeviceBloc extends Bloc<DeviceEvent, DeviceState> {
     if (event is FetchDevices) {
       try {
         final devices = await deviceRepository.fetchDevices();
-        
+
         yield DeviceLoaded(devices);
+      } on NetworkError {
+        yield DeviceError(
+            error: "There was an error occurs. Please try again!");
       }
-      on NetworkError {
-        log(state.toString());
-        yield DeviceError(error: "There was an error occurs. Please try again!");
+    } else if (event is SubcribePosition) {
+      try {
+        final Map<String, dynamic> jsonMap = event.payload;
+        final position = state.devices[jsonMap['index']].position = Position(
+          latitude: jsonMap['latitude'],
+          longitude: jsonMap['longitude'],
+          timestamp: DateTime.now(),
+        );
+        await deviceRepository.postPosition(jsonMap['deviceId'], position);
+
+        yield DeviceLoaded(state.devices);
+      } on NetworkError {
+        yield DeviceError(
+            error: "There was an error occurs. Please try again!");
       }
-    }
-    else if (event is GetCoordinate) {
-      
-    }
-    else if (event is PutDevice) {
-      final Map<String, dynamic> jsonMap = json.decode(event.payload);
+    } else if (event is PutDevice) {
+      final Map<String, dynamic> jsonMap = event.payload;
       final int id = jsonMap['id'];
       final Power status = jsonMap['status'] ? Power.On : Power.Off;
       state.devices[id].status = status;
 
       yield DeviceLoaded(state.devices);
-    }
-    else if (event is LocateDevice) {
-      final Map<String, dynamic> jsonMap = json.decode(event.payload);
-      state.devices[jsonMap['id']].position = Position(latitude: jsonMap['latitude'], longitude: jsonMap['longitude']);
+    } else if (event is LocateDevice) {
+      final Map<String, dynamic> jsonMap = event.payload;
+      state.devices[jsonMap['id']].position = Position(
+          latitude: jsonMap['latitude'], longitude: jsonMap['longitude']);
       yield DeviceLoaded(state.devices);
     }
   }

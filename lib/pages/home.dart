@@ -50,10 +50,10 @@ class _HomePageState extends State<HomePage> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => DeviceBloc(new LocalDeviceRepository()),
+          create: (context) => DeviceBloc(new SemiRemoteDeviceRepository()),
         ),
         BlocProvider(
-          create: (context) => HistoryBloc(new LocalDeviceRepository()),
+          create: (context) => HistoryBloc(new SemiRemoteDeviceRepository()),
         )
       ],
       child: Scaffold(

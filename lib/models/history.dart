@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
 
 class History extends Equatable {
-  int deviceId;
+  String deviceId;
   List<Position> positions;
 
   History({this.deviceId, this.positions});

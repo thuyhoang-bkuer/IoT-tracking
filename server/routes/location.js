@@ -12,6 +12,7 @@ router.get('/', async (req,res) => {
 });
 
 router.post('/', async (req, res) => {
+    console.log(req.body);
     const location = new Location({
         deviceId: req.body.deviceId,
         timestamp: req.body.timestamp,
@@ -31,18 +32,19 @@ router.get('/:deviceId', async (req, res) => {
     try {
         const locations = await Location.find({'deviceId': req.params.deviceId});  
         var output = [];
-
-        for (var i = 0; i < locations.length; i++) {
-            const loc_lat_long = await Coordinate.findById(locations[i].coordinate);
-            output[i] = {
-                deviceId: locations[i].deviceId,
-                latitude: loc_lat_long.latitude,
-                longitude: loc_lat_long.longitude,
-                timestamp: locations[i].timestamp,
-                user: locations[i].user 
-            };
+        if (locations.length != 0) {
+            for (var i = 0; i < locations.length; i++) {
+                const loc_lat_long = await Coordinate.findById(locations[i].coordinate);
+                output.push({
+                    deviceId: locations[i].deviceId,
+                    latitude: loc_lat_long.latitude,
+                    longitude: loc_lat_long.longitude,
+                    timestamp: locations[i].timestamp,
+                    user: locations[i].user 
+                });
+            }
+            output.sort((a,b) => (a.timestamp > b.timestamp) ? 1 : ((b.timestamp > a.timestamp) ? -1 : 0)); 
         }
-        output.sort((a,b) => (a.timestamp > b.timestamp) ? 1 : ((b.timestamp > a.timestamp) ? -1 : 0)); 
         console.log(output)
         res.json(output);   
     } catch (error) {

@@ -163,14 +163,17 @@ class _TrackingScreenState extends State<TrackingScreen>
             },
           );
           polylines = Set();
-          _googleController?.animateCamera(
-            CameraUpdate.newCameraPosition(
-              CameraPosition(
-                  target: LatLng(widget.constant['latitude'],
-                      widget.constant['longitude']),
-                  zoom: widget.constant['zoom']),
-            ),
-          );
+          // _googleController?.animateCamera(
+          //   CameraUpdate.newCameraPosition(
+          //     CameraPosition(
+          //       target: LatLng(
+          //         widget.constant['latitude'],
+          //         widget.constant['longitude'],
+          //       ),
+          //       zoom: widget.constant['zoom'],
+          //     ),
+          //   ),
+          // );
         } else if (state is HistoryLoading) {
           markers = HistoryUtils.retriveAllPoints(
             context,
@@ -191,7 +194,7 @@ class _TrackingScreenState extends State<TrackingScreen>
           polylines = Set()
             ..add(
               Polyline(
-                polylineId: PolylineId(state.deviceId.toString()),
+                polylineId: PolylineId(state.deviceId),
                 points: points,
                 startCap: Cap.roundCap,
                 endCap: Cap.roundCap,
@@ -344,7 +347,7 @@ class _TrackingScreenState extends State<TrackingScreen>
     );
   }
 
-  showHistoryOf(BuildContext context, int id) {
+  showHistoryOf(BuildContext context, String id) {
     Scaffold.of(context).showBottomSheet((context) {
       return BlocBuilder<HistoryBloc, HistoryState>(
         builder: (context, state) {
