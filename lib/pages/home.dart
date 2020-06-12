@@ -1,35 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tracking_app/blocs/_.dart';
+import 'package:tracking_app/data/device_repository.dart';
 import 'package:tracking_app/models/_.dart';
 import 'package:tracking_app/pages/screens/_.dart';
+import 'package:tracking_app/styles/index.dart';
 import 'package:tracking_app/widgets/animated_bar.dart';
+import 'package:tracking_app/widgets/title_bar.dart';
 
 class HomePage extends StatefulWidget {
   List<AnimatedItem> tabItems = [
     AnimatedItem(
-      text: "History",
-      iconData: Icons.history,
-      color: Color(0xFFF4B400),
-      screen: HistoryScreen(),
+      text: "Devices",
+      iconData: Icons.device_hub,
+      color: Styles.greeny,
+      screen: DeviceScreen(),
+      fontSize: 18,
     ),
     AnimatedItem(
       text: "Track",
       iconData: Icons.gps_fixed,
-      color: Color(0xFF0F9D58),
+      color: Styles.greeny,
       screen: TrackingScreen(),
-    ),
-    AnimatedItem(
-      text: "Privacy",
-      iconData: Icons.book,
-      color: Color(0xFFDB4437),
-      screen: PrivacyScreen(),
+      fontSize: 18,
     ),
     AnimatedItem(
       text: "Setting",
       iconData: Icons.settings,
-      color: Color(0xFF4285F4),
+      color: Styles.greeny,
       screen: SettingScreen(),
+      fontSize: 18,
     ),
   ];
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -41,40 +44,60 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _pageIndex = 0;
   }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          _buildOffstageNavigator(0),
-          _buildOffstageNavigator(1),
-          _buildOffstageNavigator(2),
-          _buildOffstageNavigator(3)
-        ],
-      ),
-      bottomNavigationBar: AnimatedBottomBar(
-        items: widget.tabItems,
-        onItemTap: (index) {
-          setState(() {
-            _pageIndex = index;
-          });
-        },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => DeviceBloc(new SemiRemoteDeviceRepository()),
+        ),
+        BlocProvider(
+          create: (context) => HistoryBloc(new SemiRemoteDeviceRepository()),
+        ),
+        BlocProvider(
+          create: (context) => PrivacyBloc(new LocalDeviceRepository()),
+        )
+      ],
+      child: Scaffold(
+        body: Stack(
+          children: [
+            _buildOffStageNavigator(0),
+            _buildOffStageNavigator(1),
+            _buildOffStageNavigator(2),
+          ],
+        ),
+        bottomNavigationBar: AnimatedBottomBar(
+          items: widget.tabItems,
+          onItemTap: (index) {
+            setState(() {
+              _pageIndex = index;
+            });
+          },
+        ),
       ),
     );
   }
+
   Map<String, WidgetBuilder> _routeBuilders(BuildContext context, int index) {
     return {
       '/': (context) {
         return [
-          HistoryScreen(),
-          TrackingScreen(),
-          PrivacyScreen(),
-          SettingScreen()
+          DeviceScreen(
+            primaryColor: Styles.greeny,
+          ),
+          TrackingScreen(
+            primaryColor: Styles.greeny,
+          ),
+          SettingScreen(
+            primaryColor: Styles.greeny,
+          )
         ].elementAt(index);
       },
     };
   }
-  Widget _buildOffstageNavigator(int index) {
+
+  Widget _buildOffStageNavigator(int index) {
     var routeBuilders = _routeBuilders(context, index);
     return Offstage(
       offstage: _pageIndex != index,
