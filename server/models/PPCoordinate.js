@@ -13,3 +13,5 @@ const PPCoordinateSchema = new Schema({
 });
 
 const PPCoordinate = model("PPCoordinate", PPCoordinateSchema);
+module.exports = PPCoordinate;
+
