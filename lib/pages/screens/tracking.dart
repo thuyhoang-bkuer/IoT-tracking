@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -127,8 +126,7 @@ class _TrackingScreenState extends State<TrackingScreen>
                   )
                   .toList();
               _googleController?.animateCamera(
-                CameraUpdate.newLatLngBounds(
-                    HistoryUtils.retriveBoundOf(points), 140),
+                CameraUpdate.newLatLngBounds(Utils.retriveBoundOf(points), 140),
               );
             }
             Navigator.pop(context);
@@ -174,7 +172,7 @@ class _TrackingScreenState extends State<TrackingScreen>
         Set<Polyline> polylines;
 
         if (state is HistoryInitial || state is HistoryError) {
-          markers = HistoryUtils.retriveAllPoints(
+          markers = Utils.retriveAllPoints(
             context,
             deviceState.devices,
             (device) {
@@ -197,7 +195,7 @@ class _TrackingScreenState extends State<TrackingScreen>
           //   ),
           // );
         } else if (state is HistoryLoading) {
-          markers = HistoryUtils.retriveAllPoints(
+          markers = Utils.retriveAllPoints(
             context,
             deviceState.devices.where((d) => d.id == state.deviceId).toList(),
             (device) {
@@ -225,7 +223,7 @@ class _TrackingScreenState extends State<TrackingScreen>
             );
           _googleController?.animateCamera(
             CameraUpdate.newLatLngBounds(
-              HistoryUtils.retriveBoundOf(points),
+              Utils.retriveBoundOf(points),
               140,
             ),
           );
@@ -438,8 +436,8 @@ class _TrackingScreenState extends State<TrackingScreen>
                       inactiveColor: Styles.nearlyBlack,
                       activeColor: widget.primaryColor,
                       labels: RangeLabels(
-                        '${HistoryUtils.retriveDate(latest.timestamp, _period.start)}',
-                        '${HistoryUtils.retriveDate(latest.timestamp, _period.end)}',
+                        '${Utils.retriveDate(latest.timestamp, _period.start)}',
+                        '${Utils.retriveDate(latest.timestamp, _period.end)}',
                       ),
                       divisions: 144,
                       onChanged: (value) {
@@ -453,8 +451,7 @@ class _TrackingScreenState extends State<TrackingScreen>
                 ),
               ],
             );
-          } 
-          else if (state is HistoryError) {
+          } else if (state is HistoryError) {
             child = Center(
               child: Icon(
                 Icons.error,
