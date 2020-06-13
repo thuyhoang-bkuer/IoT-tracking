@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
-import 'package:tracking_app/user_repository/user_repository.dart';
-import 'package:tracking_app/blocs/authentication/_.dart';
+import 'package:tracking_app/data/_.dart';
+
+part 'authentication_events.dart';
+part 'authentication_states.dart';
 
 class AuthenticationBloc extends Bloc<AuthenticationEvent,AuthenticationState>{
   final UserRepository userRepository;

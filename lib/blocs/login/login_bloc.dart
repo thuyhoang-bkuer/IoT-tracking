@@ -1,11 +1,12 @@
 import 'dart:async';
-
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
-import 'package:tracking_app/user_repository/_.dart';
+import 'package:tracking_app/blocs/_.dart';
+import 'package:tracking_app/data/_.dart';
 
-import 'package:tracking_app/blocs/authentication/_.dart';
-import 'package:tracking_app/blocs/login/_.dart';
+part 'login_events.dart';
+part 'login_states.dart';
 
 class LoginBloc extends Bloc<LoginEvent,LoginState>{
   final UserRepository userRepository;
@@ -27,11 +28,11 @@ class LoginBloc extends Bloc<LoginEvent,LoginState>{
           yield LoginInitial();
         }
         else{
-          yield LoginFailure();
+          yield LoginFailure(error: null);
         }
       }
       catch(error){
-        yield LoginFailure();
+        yield LoginFailure(error: null);
       }
     }
   }
