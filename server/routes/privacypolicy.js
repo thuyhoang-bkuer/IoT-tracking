@@ -3,6 +3,7 @@ const router = express.Router();
 const Policy = require('../models/PrivacyPolicy');
 const PPCoor = require('../models/PPCoordinate');
 const Coordinate = require('../models/Coordinate');
+const Place = require('../models/Place');
 
 router.get('/', async (req,res) => {
     try{
@@ -21,6 +22,31 @@ router.get('/user/:userId', async (req, res) => {
         res.json({message: error});
     }
 });
+
+router.get('/:deviceId', async (req, res) => {
+    try {
+        const policy = await Policy.find({'deviceId':req.params.deviceId});
+        const output = {};
+        output["deviceId"] = policy[0].deviceId;
+        var listPolicy = [];
+        // output["timeEnd"] = policy.timeEnd;
+        // output["timeStart"] = policy.timeStart;
+        // output["placement"] = policy.place.name;
+        for (var i = 0; i < policy.length; i++) {
+            const subPolicy = {};
+            subPolicy["deviceId"] = policy[i].deviceId;
+            subPolicy["timeEnd"] = policy[i].timeEnd;
+            subPolicy["timeStart"] = policy[i].timeStart;
+            subPolicy["placement"] = policy[i].place;
+            listPolicy.push(subPolicy);
+        }
+        output["policies"] = listPolicy;
+        res.json(output);   
+    } catch (error) {
+        res.json({message: error});
+    }
+});
+
 router.get('/pp/:ppid', async (req, res) => {
     const policy = await Policy.findOne({'_id':req.params.ppid});
     // var location = policy.createElement("location");
@@ -53,38 +79,40 @@ router.get('/pp/:ppid', async (req, res) => {
     }
 });
 router.post('/', async (req, res) => {
+    const district = await Place.find({'name': req.body.placement});
     const policy = new Policy({
         deviceId: req.body.deviceId,
         timeStart: req.body.timeStart,
         timeEnd: req.body.timeEnd,
-        user: req.body.user
+        user: req.body.user,
+        place: district._id,
     });
-    var recent_policy_id;
-    const savePolicy = await policy.save(
-        // function(err,room){
-        //     recent_policy_id = room._id;
-        // }        
-    );
-    recent_policy_id = policy._id;
-    locations = req.body.place;
-    for (var i = 0; i < locations.length; i++) {
-        const coordinate = new Coordinate({
-            longitude: locations[i].longitude,
-            latitude: locations[i].latitude
-        });
-        var recent_coor_id;
-        const saveCoor = await coordinate.save(
-            // function(err,room){
-            //     recent_coor_id = room._id;
-            // }    
-        );
-        recent_coor_id = coordinate._id;
-        const ppcoor = new PPCoor({
-            ppid: recent_policy_id,
-            coordinate: recent_coor_id
-        });
-        const savePPCoor = await ppcoor.save();
-    }
+    // var recent_policy_id;
+    // const savePolicy = await policy.save(
+    //     // function(err,room){
+    //     //     recent_policy_id = room._id;
+    //     // }        
+    // );
+    // recent_policy_id = policy._id;
+    // locations = req.body.place;
+    // for (var i = 0; i < locations.length; i++) {
+    //     const coordinate = new Coordinate({
+    //         longitude: locations[i].longitude,
+    //         latitude: locations[i].latitude
+    //     });
+    //     var recent_coor_id;
+    //     const saveCoor = await coordinate.save(
+    //         // function(err,room){
+    //         //     recent_coor_id = room._id;
+    //         // }    
+    //     );
+    //     recent_coor_id = coordinate._id;
+    //     const ppcoor = new PPCoor({
+    //         ppid: recent_policy_id,
+    //         coordinate: recent_coor_id
+    //     });
+    //     const savePPCoor = await ppcoor.save();
+    // }
 
     try {
         const savePolicy = await policy.save();
@@ -94,7 +122,6 @@ router.post('/', async (req, res) => {
         res.json({message: err});
     }
 });
-
 
 
 router.delete('/:policyId', async (req, res) => {
