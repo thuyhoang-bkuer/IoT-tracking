@@ -10,6 +10,10 @@ const PPCoordinateSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Coordinate",
     },
+    place: {
+        type: String,
+        required: true,
+    }
 });
 
 const PPCoordinate = model("PPCoordinate", PPCoordinateSchema);
