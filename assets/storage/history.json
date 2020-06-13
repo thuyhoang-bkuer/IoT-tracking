@@ -1,0 +1,65 @@
+{
+	"deviceId": "1001",
+	"positions": [
+		{
+			"id": 1001,
+			"latitude": 10.792904,
+			"longitude": 106.662448,
+			"timestamp": 1591509245000
+		},
+		{
+			"id": 1001,
+			"latitude": 10.793520, 
+			"longitude": 106.662669,
+			"timestamp": 1591509845000
+		},
+		{
+			"id": 1001,
+			"latitude": 10.793851, 
+			"longitude": 106.662846,
+			"timestamp": 1591510445000
+		},
+		{
+			"id": 1001,
+			"latitude": 10.794143, 
+			"longitude": 106.663046,
+			"timestamp": 1591511045000
+		},
+		{
+			"id": 1001,
+			"latitude": 10.794507,
+			"longitude": 106.663257,
+			"timestamp": 1591511645000
+		},
+		{
+			"id": 1001,
+			"latitude": 10.795096, 
+			"longitude": 106.663611,
+			"timestamp": 1591512245000
+		},
+		{
+			"id": 1001,
+			"latitude": 10.795427, 
+			"longitude": 106.663822,
+			"timestamp": 1591512845000
+		},
+		{
+			"id": 1001,
+			"latitude": 10.795679, 
+			"longitude": 106.663965,
+			"timestamp": 1591513445000
+		},
+		{
+			"id": 1001,
+			"latitude": 10.794903, 
+			"longitude": 106.664335,
+			"timestamp": 1591514045000
+		},
+		{
+			"id": 1001,
+			"latitude": 10.794283,
+			"longitude": 106.664635,
+			"timestamp": 1591514645000
+		}
+	]
+}

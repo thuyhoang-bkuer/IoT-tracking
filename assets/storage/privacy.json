@@ -1,0 +1,29 @@
+{
+  "deviceId": "1001",
+  "policies": [
+    {
+      "deviceId": "1001",
+      "timeEnd": 1591509845000,
+      "timeStart": 1591509945000,
+      "placement": "Quận 10"
+    },
+    {
+      "deviceId": "1001",
+      "timeEnd": 1591609845000,
+      "timeStart": 1591609945000,
+      "placement": "Quận 10"
+    },
+    {
+      "deviceId": "1001",
+      "timeEnd": 1591509845000,
+      "timeStart": 1591510845000,
+      "placement": "Quận 10"
+    },
+    {
+      "deviceId": "1001",
+      "timeEnd": 1591509845000,
+      "timeStart": 1591509855000,
+      "placement": "Quận 10"
+    }
+  ]
+}

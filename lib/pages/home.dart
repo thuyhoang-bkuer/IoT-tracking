@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tracking_app/blocs/device_bloc.dart';
+import 'package:tracking_app/blocs/_.dart';
 import 'package:tracking_app/data/device_repository.dart';
 import 'package:tracking_app/models/_.dart';
 import 'package:tracking_app/pages/screens/_.dart';
@@ -39,8 +39,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _pageIndex;
-  List<Device> devices = [Device(id: 1234, name: 'World_One')];
-
   @override
   void initState() {
     super.initState();
@@ -52,17 +50,22 @@ class _HomePageState extends State<HomePage> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => DeviceBloc(new LocalDeviceRepository()),
+          create: (context) => DeviceBloc(new SemiRemoteDeviceRepository()),
         ),
+        BlocProvider(
+          create: (context) => HistoryBloc(new SemiRemoteDeviceRepository()),
+        ),
+        BlocProvider(
+          create: (context) => PrivacyBloc(new LocalDeviceRepository()),
+        )
       ],
       child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(60),
-          child: TitleBar(),
-        ),
-        body: Container(
-          // create: (context) => HomeBloc(devices),
-          child: widget.tabItems[_pageIndex].screen,
+        body: Stack(
+          children: [
+            _buildOffStageNavigator(0),
+            _buildOffStageNavigator(1),
+            _buildOffStageNavigator(2),
+          ],
         ),
         bottomNavigationBar: AnimatedBottomBar(
           items: widget.tabItems,
@@ -72,6 +75,38 @@ class _HomePageState extends State<HomePage> {
             });
           },
         ),
+      ),
+    );
+  }
+
+  Map<String, WidgetBuilder> _routeBuilders(BuildContext context, int index) {
+    return {
+      '/': (context) {
+        return [
+          DeviceScreen(
+            primaryColor: Styles.greeny,
+          ),
+          TrackingScreen(
+            primaryColor: Styles.greeny,
+          ),
+          SettingScreen(
+            primaryColor: Styles.greeny,
+          )
+        ].elementAt(index);
+      },
+    };
+  }
+
+  Widget _buildOffStageNavigator(int index) {
+    var routeBuilders = _routeBuilders(context, index);
+    return Offstage(
+      offstage: _pageIndex != index,
+      child: Navigator(
+        onGenerateRoute: (routeSettings) {
+          return MaterialPageRoute(
+            builder: (context) => routeBuilders[routeSettings.name](context),
+          );
+        },
       ),
     );
   }
