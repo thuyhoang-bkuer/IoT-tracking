@@ -22,6 +22,9 @@ app.use('/privatepolicy', privatepolicyRoute);
 const userRoute = require('./routes/user');
 app.use('/user', userRoute);
 
+const placeRoute = require('./routes/place');
+app.use('/placement', placeRoute);
+
 
 
 app.get('/', (req, res) => {

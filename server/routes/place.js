@@ -13,6 +13,7 @@ router.get('/', async (req,res) => {
 });
 
 router.get('/:districtName', async (req, res) => {
+    console.log(`[Place GET] ${req.params.districtName}`)
     try {
         const points = await Place.find({'name': req.params.districtName})
         res.json(points);   
@@ -22,6 +23,7 @@ router.get('/:districtName', async (req, res) => {
 });
 
 router.post('/', async(req, res) => {
+    console.log(`[Place POST]`)
     const place = new Place({
         name: req.body.name,
         listPoints: req.body.listPoints,
@@ -33,4 +35,7 @@ router.post('/', async(req, res) => {
     catch(err){
         res.json({message: err});
     }
+    console.log({place});
 })
+
+module.exports = router;
