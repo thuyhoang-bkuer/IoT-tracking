@@ -4,10 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
-import 'package:simple_animations/simple_animations.dart';
 import 'package:tracking_app/blocs/_.dart';
 import 'package:tracking_app/models/_.dart';
-import 'package:tracking_app/pages/screens/devices.dart';
 import 'package:tracking_app/styles/index.dart';
 import 'package:tracking_app/widgets/common/fade_in.dart';
 
@@ -148,94 +146,9 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
           preferredSize: Size.fromHeight(60),
           child: _buildNavigateBar(context, state),
         ),
-        body: Container(
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: ListView(
-                  children: List.generate(
-                    state.policies.length,
-                    (i) => FadeIn(
-                      delay: i * 0.4,
-                      child: Slidable(
-                        key: Key('dismiss_$i'),
-                        actionPane: SlidableDrawerActionPane(),
-                        secondaryActions: <Widget>[
-                          IconSlideAction(
-                            caption: 'Delete',
-                            color: Colors.red,
-                            icon: Icons.delete,
-                            onTap: () => null,
-                          ),
-                        ],
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            child: Icon(
-                              Icons.timer,
-                              size: 24,
-                              color: Styles.nearlyWhite,
-                            ),
-                            backgroundColor: widget.primaryColor,
-                          ),
-                          title: Row(
-                            children: <Widget>[
-                              Expanded(
-                                flex: 5,
-                                child: Center(
-                                  child: Text(
-                                    DateFormat('HH:mm - dd/MM/yyyy').format(
-                                      state.policies[i].timeStart,
-                                    ),
-                                    style: TextStyle(
-                                      color: Styles.nearlyBlack,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Icon(
-                                  Icons.arrow_forward,
-                                  size: 24,
-                                  color: widget.primaryColor,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 5,
-                                child: Center(
-                                  child: Text(
-                                    DateFormat('HH:mm - dd/MM/yyyy').format(
-                                      state.policies[i].timeEnd,
-                                    ),
-                                    style: TextStyle(
-                                      color: Styles.nearlyBlack,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          subtitle: Padding(
-                            padding: const EdgeInsets.only(left: 4.0),
-                            child: Text(
-                              state.policies[i].placement,
-                              style: TextStyle(
-                                color: Styles.nearlyBlack,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        body: state.policies.length == 0
+            ? _emptyPrivacyBoard(context, state)
+            : _privacyBoard(context, state),
         floatingActionButton: Builder(
           builder: (context) => FloatingActionButton(
             onPressed: () => setState(() => _addEnable = true),
@@ -253,32 +166,199 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
         ),
       );
     } else {
-      return Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(60),
-          child: _buildFormBar(context, state),
-        ),
-        body: PrivacyForm(primaryColor: widget.primaryColor),
-        floatingActionButton: Builder(
-          builder: (context) => FloatingActionButton(
-            onPressed: () => setState(() => _addEnable = false),
-            elevation: 1,
-            focusElevation: 0,
-            highlightElevation: 0,
-            backgroundColor: widget.primaryColor,
-            child: Icon(
-              Icons.close,
-              size: 24,
-              color: Styles.nearlyWhite,
-            ),
-            splashColor: widget.primaryColor,
-          ),
-        ),
+      return PrivacyForm(
+        deviceId: state.deviceId,
+        primaryColor: widget.primaryColor,
+        fabHandler: () {
+          setState(() => _addEnable = false);
+        },
       );
     }
   }
 
-  Widget _buildFormBar(BuildContext context, PrivacyLoaded state) {
+  Widget _emptyPrivacyBoard(BuildContext context, PrivacyLoaded state) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Center(
+          child: Icon(
+            Icons.alarm_off,
+            size: 128,
+            color: Styles.deactivatedText,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Center(
+            child: Text(
+              'Click + to add new privacy',
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _privacyBoard(BuildContext context, PrivacyLoaded state) {
+    return Container(
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: ListView(
+              children: List.generate(
+                state.policies.length,
+                (i) => FadeIn(
+                  delay: i * 0.4,
+                  child: Slidable(
+                    key: Key('dismiss_$i'),
+                    actionPane: SlidableDrawerActionPane(),
+                    secondaryActions: <Widget>[
+                      IconSlideAction(
+                        caption: 'Delete',
+                        color: Colors.red,
+                        icon: Icons.delete,
+                        onTap: () {
+                          final privacy = state.policies[i];
+                          final payload = {
+                            'deviceId': state.deviceId,
+                            '_id': privacy.id,
+                          };
+                          BlocProvider.of<PrivacyBloc>(context).add(RemovePrivacy(null, payload));
+                        },
+                      ),
+                    ],
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        child: Icon(
+                          Icons.timer,
+                          size: 24,
+                          color: Styles.nearlyWhite,
+                        ),
+                        backgroundColor: widget.primaryColor,
+                      ),
+                      title: Row(
+                        children: <Widget>[
+                          Expanded(
+                            flex: 5,
+                            child: Center(
+                              child: Text(
+                                DateFormat('HH:mm - dd/MM/yyyy').format(
+                                  state.policies[i].timeStart,
+                                ),
+                                style: TextStyle(
+                                  color: Styles.nearlyBlack,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Icon(
+                              Icons.arrow_forward,
+                              size: 24,
+                              color: widget.primaryColor,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 5,
+                            child: Center(
+                              child: Text(
+                                DateFormat('HH:mm - dd/MM/yyyy').format(
+                                  state.policies[i].timeEnd,
+                                ),
+                                style: TextStyle(
+                                  color: Styles.nearlyBlack,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      subtitle: Padding(
+                        padding: const EdgeInsets.only(left: 4.0),
+                        child: Text(
+                          Place.districts[state.policies[i].placement],
+                          style: TextStyle(
+                            color: Styles.nearlyBlack,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PrivacyForm extends StatefulWidget {
+  final String deviceId;
+  final Color primaryColor;
+  final Function() fabHandler;
+
+  const PrivacyForm(
+      {Key key, this.primaryColor, this.fabHandler, this.deviceId})
+      : super(key: key);
+
+  @override
+  _PrivacyFormState createState() => _PrivacyFormState();
+}
+
+class _PrivacyFormState extends State<PrivacyForm> {
+  DateTime _timeStart;
+  DateTime _timeEnd;
+  int _placement;
+
+  @override
+  void initState() {
+    super.initState();
+    _timeStart = null;
+    _timeEnd = null;
+    _placement = -1;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60),
+        child: _buildFormBar(context),
+      ),
+      body: Column(
+        children: <Widget>[
+          _timeStartPicker(context),
+          _timeEndPicker(context),
+          _placementPicker(context),
+        ],
+      ),
+      floatingActionButton: Builder(
+        builder: (context) => FloatingActionButton(
+          onPressed: widget.fabHandler,
+          elevation: 1,
+          focusElevation: 0,
+          highlightElevation: 0,
+          backgroundColor: widget.primaryColor,
+          child: Icon(
+            Icons.close,
+            size: 24,
+            color: Styles.nearlyWhite,
+          ),
+          splashColor: widget.primaryColor,
+        ),
+      ),
+    );
+    ;
+  }
+
+  Widget _buildFormBar(BuildContext context) {
     return Stack(
       alignment: Alignment.centerLeft,
       children: <Widget>[
@@ -297,336 +377,321 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
         FloatingActionButton(
           mini: true,
           backgroundColor: Colors.transparent,
-          splashColor: Styles.greeny.withOpacity(0.15),
+          splashColor: widget.primaryColor.withOpacity(0.15),
           highlightElevation: 0,
           elevation: 0,
-          onPressed: () {},
+          onPressed: () {
+            final privacy = Privacy(
+              null,
+              deviceId: widget.deviceId,
+              timeStart: _timeStart.toUtc(),
+              timeEnd: _timeEnd.toUtc(),
+              placement: Place.districts.keys.toList()[_placement],
+            );
+            final payload = {'deviceId': widget.deviceId, 'privacy': privacy.toJson(),};
+
+            widget.fabHandler();
+            BlocProvider.of<PrivacyBloc>(context)
+                .add(PostPrivacy(null, payload));
+          },
           child: Icon(
             Icons.check,
             size: 24,
             color: widget.primaryColor,
           ),
-          foregroundColor: Styles.greeny,
+          foregroundColor: widget.primaryColor,
         ),
       ],
     );
   }
-}
 
-class PrivacyForm extends StatefulWidget {
-  final Color primaryColor;
-
-  const PrivacyForm({Key key, this.primaryColor}) : super(key: key);
-
-  @override
-  _PrivacyFormState createState() => _PrivacyFormState();
-}
-
-class _PrivacyFormState extends State<PrivacyForm> {
-  DateTime _timeStart;
-  DateTime _timeEnd;
-  int placement;
-
-  @override
-  void initState() {
-    super.initState();
-    _timeStart = DateTime.now();
-    _timeEnd = DateTime.now();
-    placement = 0;
+  Widget _timeStartPicker(BuildContext context) {
+    return FadeIn(
+      delay: 0,
+      translateX: false,
+      child: Container(
+        margin: EdgeInsets.all(16.0),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              flex: 2,
+              child: Text(
+                "Time Start",
+                style: TextStyle(
+                  color: widget.primaryColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 5,
+              child: Center(
+                child: Text(
+                  _timeStart == null
+                      ? ''
+                      : DateFormat('HH:mm MMM dd, yyyy').format(_timeStart),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: FloatingActionButton(
+                onPressed: () {
+                  final oneShot = DateTime.now();
+                  showModalBottomSheet<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return FractionallySizedBox(
+                        heightFactor: 0.5,
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.0),
+                              child: Text(
+                                'Time Start',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w500,
+                                  color: widget.primaryColor,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: CupertinoDatePicker(
+                                mode: CupertinoDatePickerMode.dateAndTime,
+                                initialDateTime: oneShot,
+                                minimumDate: oneShot,
+                                maximumDate: oneShot.add(Duration(days: 30)),
+                                onDateTimeChanged: (value) {
+                                  setState(() => _timeStart = value);
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+                elevation: 0,
+                highlightElevation: 0,
+                mini: true,
+                backgroundColor: Colors.transparent,
+                shape: CircleBorder(
+                  side: BorderSide(
+                    color: widget.primaryColor,
+                    width: 2.0,
+                  ),
+                ),
+                child: Icon(
+                  Icons.edit,
+                  color: widget.primaryColor,
+                  size: 24,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        FadeIn(
-          delay: 0,
-          translateX: false,
-          child: Container(
-            margin: EdgeInsets.all(16.0),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    "Time Start",
-                    style: TextStyle(
-                      color: widget.primaryColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+  Widget _timeEndPicker(BuildContext context) {
+    return FadeIn(
+      delay: 0.4,
+      translateX: false,
+      child: Container(
+        margin: EdgeInsets.all(16.0),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              flex: 2,
+              child: Text(
+                "Time End",
+                style: TextStyle(
+                  color: widget.primaryColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
                 ),
-                Expanded(
-                  flex: 5,
-                  child: Center(
-                    child: Text(
-                      DateFormat('HH:mm MMM dd, yyyy').format(_timeStart),
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      final oneShot = DateTime.now();
-                      showModalBottomSheet<void>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return FractionallySizedBox(
-                            heightFactor: 0.5,
-                            child: Column(
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                                  child: Text(
-                                    'Time Start',
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w500,
-                                      color: widget.primaryColor,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: CupertinoDatePicker(
-                                    mode: CupertinoDatePickerMode.dateAndTime,
-                                    initialDateTime: oneShot,
-                                    minimumDate: oneShot,
-                                    maximumDate:
-                                        oneShot.add(Duration(days: 30)),
-                                    onDateTimeChanged: (value) {
-                                      setState(() => _timeStart = value);
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    elevation: 0,
-                    highlightElevation: 0,
-                    mini: true,
-                    backgroundColor: Colors.transparent,
-                    shape: CircleBorder(
-                      side: BorderSide(
-                        color: widget.primaryColor,
-                        width: 2.0,
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.edit,
-                      color: widget.primaryColor,
-                      size: 24,
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
-        // FadeIn(
-        //   delay: 0,
-        //   child: Divider(
-        //     indent: 24,
-        //     endIndent: 24,
-        //     color: Styles.nearlyBlack,
-        //   ),
-        // ),
-        FadeIn(
-          delay: 0.4,
-          translateX: false,
-          child: Container(
-            margin: EdgeInsets.all(16.0),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    "Time End",
-                    style: TextStyle(
-                      color: widget.primaryColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
+            Expanded(
+              flex: 5,
+              child: Center(
+                child: Text(
+                  _timeEnd == null
+                      ? ''
+                      : DateFormat('HH:mm MMM dd, yyyy').format(_timeEnd),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
-                Expanded(
-                  flex: 5,
-                  child: Center(
-                    child: Text(
-                      DateFormat('HH:mm MMM dd, yyyy').format(_timeEnd),
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                    flex: 1,
-                    child: FloatingActionButton(
-                      onPressed: () {
-                        final oneShot = DateTime.now();
-                        showModalBottomSheet<void>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return FractionallySizedBox(
-                              heightFactor: 0.5,
-                              child: Column(
-                                children: <Widget>[
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Text(
-                                      'Time End',
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.w500,
-                                        color: widget.primaryColor,
-                                      ),
-                                    ),
+              ),
+            ),
+            Expanded(
+                flex: 1,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    final oneShot = DateTime.now();
+                    showModalBottomSheet<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return FractionallySizedBox(
+                          heightFactor: 0.5,
+                          child: Column(
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text(
+                                  'Time End',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w500,
+                                    color: widget.primaryColor,
                                   ),
-                                  Expanded(
-                                    child: CupertinoDatePicker(
-                                      mode: CupertinoDatePickerMode.dateAndTime,
-                                      initialDateTime: oneShot,
-                                      minimumDate: oneShot,
-                                      maximumDate:
-                                          oneShot.add(Duration(days: 30)),
-                                      onDateTimeChanged: (value) {
-                                        setState(() => _timeEnd = value);
-                                      },
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                            );
-                          },
+                              Expanded(
+                                child: CupertinoDatePicker(
+                                  mode: CupertinoDatePickerMode.dateAndTime,
+                                  initialDateTime: oneShot,
+                                  minimumDate: oneShot,
+                                  maximumDate: oneShot.add(Duration(days: 30)),
+                                  onDateTimeChanged: (value) {
+                                    setState(() => _timeEnd = value);
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
                         );
                       },
-                      elevation: 0,
-                      highlightElevation: 0,
-                      mini: true,
-                      backgroundColor: Colors.transparent,
-                      shape: CircleBorder(
-                        side: BorderSide(
-                          color: widget.primaryColor,
-                          width: 2.0,
-                        ),
-                      ),
-                      child: Icon(
-                        Icons.edit,
-                        color: widget.primaryColor,
-                        size: 24,
-                      ),
-                    )),
-              ],
-            ),
-          ),
-        ),
-        FadeIn(
-          delay: 0.8,
-          translateX: false,
-          child: Container(
-            margin: EdgeInsets.all(16.0),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    "Place",
-                    style: TextStyle(
+                    );
+                  },
+                  elevation: 0,
+                  highlightElevation: 0,
+                  mini: true,
+                  backgroundColor: Colors.transparent,
+                  shape: CircleBorder(
+                    side: BorderSide(
                       color: widget.primaryColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
+                      width: 2.0,
                     ),
                   ),
+                  child: Icon(
+                    Icons.edit,
+                    color: widget.primaryColor,
+                    size: 24,
+                  ),
+                )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _placementPicker(BuildContext context) {
+    return FadeIn(
+      delay: 0.8,
+      translateX: false,
+      child: Container(
+        margin: EdgeInsets.all(16.0),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              flex: 2,
+              child: Text(
+                "Place",
+                style: TextStyle(
+                  color: widget.primaryColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
                 ),
-                Expanded(
-                  flex: 5,
-                  child: Center(
-                    child: Text(
-                      Place.districts.values.toList()[placement],
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
+              ),
+            ),
+            Expanded(
+              flex: 5,
+              child: Center(
+                child: Text(
+                  _placement == -1
+                      ? ''
+                      : Place.districts.values.toList()[_placement],
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
-                Expanded(
-                  flex: 1,
-                  child: FloatingActionButton(
-                    elevation: 0,
-                    highlightElevation: 0,
-                    mini: true,
-                    backgroundColor: Colors.transparent,
-                    onPressed: () {
-                      showModalBottomSheet<void>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return FractionallySizedBox(
-                            heightFactor: 0.5,
-                            child: Column(
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                                  child: Text(
-                                    'Placement',
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w500,
-                                      color: widget.primaryColor,
-                                    ),
-                                  ),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: FloatingActionButton(
+                elevation: 0,
+                highlightElevation: 0,
+                mini: true,
+                backgroundColor: Colors.transparent,
+                onPressed: () {
+                  showModalBottomSheet<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return FractionallySizedBox(
+                        heightFactor: 0.5,
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.0),
+                              child: Text(
+                                'Placement',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w500,
+                                  color: widget.primaryColor,
                                 ),
-                                Expanded(
-                                  child: CupertinoPicker(
-                                    children: Place.districts.values
-                                        .map(
-                                          (item) => Center(
-                                            child:
-                                                Text('${item.split(',')[0]}'),
-                                          ),
-                                        )
-                                        .toList(),
-                                    onSelectedItemChanged: (i) {
-                                      setState(() => placement = i);
-                                    },
-                                    itemExtent: 40.0,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                          );
-                        },
+                            Expanded(
+                              child: CupertinoPicker(
+                                children: Place.districts.values
+                                    .map(
+                                      (item) => Center(
+                                        child: Text('${item.split(',')[0]}'),
+                                      ),
+                                    )
+                                    .toList(),
+                                onSelectedItemChanged: (i) {
+                                  setState(() => _placement = i);
+                                },
+                                itemExtent: 40.0,
+                              ),
+                            ),
+                          ],
+                        ),
                       );
                     },
-                    shape: CircleBorder(
-                      side: BorderSide(
-                        color: widget.primaryColor,
-                        width: 2.0,
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.edit,
-                      color: widget.primaryColor,
-                      size: 24,
-                    ),
+                  );
+                },
+                shape: CircleBorder(
+                  side: BorderSide(
+                    color: widget.primaryColor,
+                    width: 2.0,
                   ),
                 ),
-              ],
+                child: Icon(
+                  Icons.edit,
+                  color: widget.primaryColor,
+                  size: 24,
+                ),
+              ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

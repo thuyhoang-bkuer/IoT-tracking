@@ -29,10 +29,17 @@ class PrivacyBloc extends Bloc<PrivacyEvent, PrivacyState> {
         yield PrivacyLoaded(deviceId, policies: privacy);
       }
       else if (event is PostPrivacy) {
+        final privacy = Privacy.fromMap(event.payload['privacy']);
+        await deviceRepository.postPolicy(privacy);
+        final policies = await deviceRepository.fetchPrivacy(deviceId);
 
+        yield PrivacyLoaded(deviceId, policies: policies);
       }
       else if (event is RemovePrivacy) {
+        await deviceRepository.removePrivacy(event.payload['_id']);
+        final policies = await deviceRepository.fetchPrivacy(deviceId);
 
+        yield PrivacyLoaded(deviceId, policies: policies);
       }
     }
     on NetworkError {

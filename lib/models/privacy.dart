@@ -2,13 +2,14 @@ import 'package:equatable/equatable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Privacy extends Equatable {
+  final String id;
   final String deviceId;
   final DateTime timeEnd;
   final DateTime timeStart;
   final String placement;
   final List<LatLng> place;
 
-  Privacy({
+  Privacy(this.id, {
     this.deviceId,
     this.timeEnd,
     this.timeStart,
@@ -28,17 +29,27 @@ class Privacy extends Equatable {
   static Privacy fromMap(dynamic message) {
     final Map<String, dynamic> map = message;
     return Privacy(
+      map['_id'],
       deviceId: map['deviceId'],
       placement: map['placement'],
       timeEnd: DateTime.fromMillisecondsSinceEpoch(
         map['timeEnd'].toInt(),
-        isUtc: true,
+        isUtc: false,
       ),
       timeStart: DateTime.fromMillisecondsSinceEpoch(
         map['timeStart'].toInt(),
-        isUtc: true,
+        isUtc: false,
       ),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'deviceId': deviceId,
+      'timeStart': timeStart.millisecondsSinceEpoch,
+      'timeEnd': timeEnd.millisecondsSinceEpoch,
+      'placement': placement
+    };
   }
 
   @override
