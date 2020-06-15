@@ -6,7 +6,6 @@ import 'package:tracking_app/models/_.dart';
 import 'package:tracking_app/pages/screens/_.dart';
 import 'package:tracking_app/styles/index.dart';
 import 'package:tracking_app/widgets/animated_bar.dart';
-import 'package:tracking_app/widgets/title_bar.dart';
 
 class HomePage extends StatefulWidget {
   List<AnimatedItem> tabItems = [
@@ -57,7 +56,7 @@ class _HomePageState extends State<HomePage> {
         ),
         BlocProvider(
           create: (context) => PrivacyBloc(new SemiRemoteDeviceRepository()),
-        )
+        ),
       ],
       child: Scaffold(
         body: Stack(
