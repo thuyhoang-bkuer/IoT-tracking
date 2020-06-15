@@ -23,8 +23,9 @@ class App extends StatelessWidget {
       systemNavigationBarDividerColor: Colors.grey,
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
+
     return BlocProvider(
-      create: (context) => MqttBloc(new MqttClientWrapper()),
+      create: (context) => MqttBloc(),
       child: MaterialApp(
         title: 'iTracking',
         theme: ThemeData(

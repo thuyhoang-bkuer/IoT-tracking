@@ -1,19 +1,26 @@
 part of 'mqtt_bloc.dart';
 
 abstract class MqttEvent extends Equatable {
-  final String topic;
-  final Map<String, dynamic> payload;
-  const MqttEvent(this.topic, this.payload);
+  const MqttEvent();
+}
+
+class MqttInitialize extends MqttEvent {
+  final MqttClientWrapper mqttClientWrapper;
+  MqttInitialize(this.mqttClientWrapper);
+  @override
+  List<Object> get props => [mqttClientWrapper];
 }
 
 class MqttConnect extends MqttEvent {
-  MqttConnect({String topic, Map<String, dynamic> payload}) : super(topic, payload);
+  final String topic;
+  final Map<String, dynamic> payload;
+  MqttConnect({this.topic, this.payload});
   @override
-  List<Object> get props => [];
+  List<Object> get props => [topic, payload];
 }
 
 class MqttDisconnect extends MqttEvent {
-  MqttDisconnect({String topic, Map<String, dynamic> payload}) : super(topic, payload);
+  MqttDisconnect();
   @override
   List<Object> get props => [];
 }

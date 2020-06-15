@@ -4,6 +4,11 @@ abstract class MqttState extends Equatable {
   const MqttState();
 }
 
+class MqttUnitial extends MqttState {
+  @override
+  List<Object> get props => [];
+}
+
 class MqttInitial extends MqttState {
   @override
   List<Object> get props => [];
@@ -20,6 +25,8 @@ class MqttConnected extends MqttState {
 }
 
 class MqttError extends MqttState {
+  final String error;
+  MqttError(this.error);
   @override
-  List<Object> get props => [];
+  List<Object> get props => [error];
 }

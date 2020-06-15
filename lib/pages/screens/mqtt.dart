@@ -15,16 +15,18 @@ class MqttForm extends StatefulWidget {
 }
 
 class _MqttFormState extends State<MqttForm> {
-  String _connectUri;
+  String _serverUri;
   String _port;
   String _username;
   String _password;
+  String _topic;
 
   @override
   void initState() {
     super.initState();
-    _connectUri = 'tcp://13.76.250.158';
+    _serverUri = '13.76.250.158';
     _port = '1883';
+    _topic = 'Topic/GPS';
     _username = 'BKvm2';
     _password = 'Hcmut_CSE_2020';
   }
@@ -95,7 +97,7 @@ class _MqttFormState extends State<MqttForm> {
       builder: (context, state) {
         if (state is MqttLoading) {
           return Center(
-            child: SpinKitFoldingCube(
+            child: SpinKitDualRing(
               color: widget.primaryColor,
               size: 48,
             ),
@@ -104,13 +106,6 @@ class _MqttFormState extends State<MqttForm> {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Center(
-                child: Icon(
-                  Icons.check_circle_outline,
-                  size: 128,
-                  color: Styles.greeny,
-                ),
-              ),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -123,6 +118,13 @@ class _MqttFormState extends State<MqttForm> {
                   ),
                 ),
               ),
+              Center(
+                child: Icon(
+                  Icons.check_circle_outline,
+                  size: 128,
+                  color: Styles.greeny.withOpacity(0.85),
+                ),
+              ),
             ],
           );
         } else {
@@ -130,42 +132,52 @@ class _MqttFormState extends State<MqttForm> {
             padding: EdgeInsets.all(16.0),
             child: Column(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: TextFormField(
-                    initialValue: _connectUri,
-                    decoration: InputDecoration(
-                      labelText: 'Connect Uri',
-                      focusColor: widget.primaryColor,
-                      prefixIcon: Icon(
-                        Icons.layers,
-                        size: 24,
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 6,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 8.0, right: 8.0, bottom: 8.0),
+                        child: TextFormField(
+                          initialValue: _serverUri,
+                          decoration: InputDecoration(
+                            labelText: 'Server Uri',
+                            focusColor: widget.primaryColor,
+                            prefixIcon: Icon(
+                              Icons.layers,
+                              size: 24,
+                            ),
+                          ),
+                          onChanged: (value) {
+                            setState(() => _serverUri = value);
+                          },
+                        ),
                       ),
                     ),
-                    onChanged: (value) {
-                      setState(() => _connectUri = value);
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: TextFormField(
-                    initialValue: _port,
-                    decoration: InputDecoration(
-                      labelText: 'Port',
-                      focusColor: widget.primaryColor,
-                      prefixIcon: Icon(
-                        Icons.data_usage,
-                        size: 24,
+                    Expanded(
+                      flex: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: TextFormField(
+                          initialValue: _port,
+                          decoration: InputDecoration(
+                            labelText: 'Port',
+                            focusColor: widget.primaryColor,
+                            prefixIcon: Icon(
+                              Icons.data_usage,
+                              size: 24,
+                            ),
+                          ),
+                          onChanged: (value) {
+                            setState(() => _port = value);
+                          },
+                        ),
                       ),
                     ),
-                    onChanged: (value) {
-                      setState(() => _port = value);
-                    },
-                  ),
+                  ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: TextFormField(
                     initialValue: _username,
                     decoration: InputDecoration(
@@ -199,6 +211,23 @@ class _MqttFormState extends State<MqttForm> {
                     },
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: TextFormField(
+                    initialValue: _topic,
+                    decoration: InputDecoration(
+                      labelText: 'Topic',
+                      focusColor: widget.primaryColor,
+                      prefixIcon: Icon(
+                        Icons.collections_bookmark,
+                        size: 24,
+                      ),
+                    ),
+                    onChanged: (value) {
+                      setState(() => _topic = value);
+                    },
+                  ),
+                ),
               ],
             ),
           );
@@ -227,8 +256,7 @@ class _MqttFormState extends State<MqttForm> {
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 onPressed: () {
-                  BlocProvider.of<MqttBloc>(context)
-                      .add(MqttDisconnect(topic: null, payload: null));
+                  BlocProvider.of<MqttBloc>(context).add(MqttDisconnect());
                 },
                 child: Text(
                   'Disconnect',
@@ -254,10 +282,11 @@ class _MqttFormState extends State<MqttForm> {
               ),
               onPressed: () {
                 final payload = {
-                  'connectUri': _connectUri,
+                  'serverUri': _serverUri,
                   'port': int.parse(_port),
                   'username': _username,
                   'password': _password,
+                  'topic': _topic,
                 };
                 BlocProvider.of<MqttBloc>(context)
                     .add(MqttConnect(topic: null, payload: payload));

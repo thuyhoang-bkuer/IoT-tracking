@@ -2,19 +2,19 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:mqtt_client/mqtt_client.dart';
 import 'package:tracking_app/data/device_repository.dart';
+import 'package:tracking_app/models/_.dart';
 import 'package:tracking_app/mqtt/mqtt_wrapper.dart';
 
 part 'mqtt_event.dart';
 part 'mqtt_state.dart';
 
 class MqttBloc extends Bloc<MqttEvent, MqttState> {
-  final MqttClientWrapper mqttClientWrapper;
-
-  MqttBloc(this.mqttClientWrapper);
+  MqttClientWrapper mqttClientWrapper;
 
   @override
-  MqttState get initialState => MqttInitial();
+  MqttState get initialState => MqttUnitial();
 
   @override
   Stream<MqttState> mapEventToState(
@@ -23,16 +23,40 @@ class MqttBloc extends Bloc<MqttEvent, MqttState> {
     yield MqttLoading();
 
     try {
-      if (event is MqttConnect) {
-        await Future.delayed(Duration(seconds: 3));
-        yield MqttConnected();
+      if (event is MqttInitialize) {
+        mqttClientWrapper = event.mqttClientWrapper;
+        yield MqttInitial();
       }
-      else if (event is MqttDisconnect) {
+      else if (event is MqttConnect) {
+        if (state is MqttUnitial) {
+          throw Error();
+        }
+        final mqttConfig = MqttConfig(
+          serverUri: event.payload['serverUri'],
+          port: event.payload['port'],
+          username: event.payload['username'],
+          password: event.payload['password'],
+          topicName: event.payload['topic'],
+          clientIdentifier: 'shin.re',
+          keepAlivePeriod: 20,
+          usedQoS: MqttQos.atLeastOnce
+        );
+        final response = await mqttClientWrapper.prepareMqttClient(mqttConfig);
+
+        if (response.state == MqttConnectionState.connected) {
+          yield MqttConnected();
+        }
+        else yield MqttInitial();
+
+      } else if (event is MqttDisconnect) {
+        mqttClientWrapper.client.disconnect();
         await Future.delayed(Duration(seconds: 3));
         yield MqttInitial();
       }
     } on NetworkError {
-      yield MqttError();
+      yield MqttError('Network error!');
+    } on Error {
+      yield MqttError('MqttClient was not initialized!');
     }
   }
 }

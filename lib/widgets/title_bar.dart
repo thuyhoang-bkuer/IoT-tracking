@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:tracking_app/blocs/_.dart';
+import 'package:tracking_app/mqtt/mqtt_wrapper.dart';
 import 'package:tracking_app/pages/screens/mqtt.dart';
 import 'package:tracking_app/styles/index.dart';
 
@@ -127,8 +128,7 @@ class _TitleBarState extends State<TitleBar> {
                 color: Styles.greeny,
               );
               label = "On";
-            }
-            else {
+            } else {
               color = Styles.reddy;
               icon = Icon(
                 Icons.power_settings_new,
@@ -145,6 +145,17 @@ class _TitleBarState extends State<TitleBar> {
                 elevation: 1,
                 pressElevation: 0,
                 onPressed: () {
+                  if (state is MqttUnitial) {
+                    BlocProvider.of<MqttBloc>(context).add(
+                      MqttInitialize(
+                        new MqttClientWrapper(
+                          onDisconnectedCallback: () {
+                            // BlocProvider.of<MqttBloc>(context).add(MqttDisconnect());
+                          },
+                        ),
+                      ),
+                    );
+                  }
                   showDialog(
                     context: context,
                     builder: (context) {
