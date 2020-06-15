@@ -25,6 +25,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
         child: TitleBar(
           primaryColor: widget.primaryColor,
           pageIndex: 0,
+          usedMqtt: true,
         ),
       ),
       body: MultiBlocListener(
