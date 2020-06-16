@@ -14,6 +14,7 @@ router.get('/', async (req,res) => {
 router.post('/', async (req, res) => {
     const user = new User({
         email: req.body.email,
+	username: req.body.username,
         password: req.body.password,
         admin: req.body.admin
     });
@@ -25,16 +26,15 @@ router.post('/', async (req, res) => {
         res.json({message: err});
     }
 });
-router.get('/:userId', async (req, res) => {
+router.get('/user/:userId', async (req, res) => {
     try {
-        console.log("----- Get USER ------")
-        const users = await User.find(req.params.email)
+        const users = await User.findById(req.params.userId)
         res.json(users);   
     } catch (error) {
         res.json({message: error});
     }
 });
-router.get('/:adminId', async (req, res) => {
+router.get('/admin/:adminId', async (req, res) => {
     try {
         const users = await User.findById(req.params.admin)
         res.json(users);   
@@ -42,7 +42,15 @@ router.get('/:adminId', async (req, res) => {
         res.json({message: error});
     }
 });
-
+router.get('/:userEmail', async (req, res) => {
+    try {
+        console.log("-----GET USER-------")
+        const users = await User.find({'email': req.params.userEmail})
+        res.json(users);   
+    } catch (error) {
+        res.json({message: error});
+    }
+});
 router.delete('/:userId', async (req, res) => {
     try {
         const removedUser = await User.remove({_id: req.params.userId});
