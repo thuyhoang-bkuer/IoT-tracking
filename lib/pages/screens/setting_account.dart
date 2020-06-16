@@ -139,10 +139,9 @@ class _SettingAccountState extends State<SettingAccount> {
                                     horizontal: 10, vertical: 10),
                                 child: TextField(
                                   decoration: InputDecoration(
-                                      labelText: name_user,
                                       enabledBorder: OutlineInputBorder(
                                           borderSide:
-                                              BorderSide(color: Colors.grey)),
+                                          BorderSide(color: Colors.grey)),
                                       border: OutlineInputBorder()),
                                   onChanged: (value) {
                                     setState(() {
@@ -180,10 +179,9 @@ class _SettingAccountState extends State<SettingAccount> {
                                     horizontal: 10, vertical: 10),
                                 child: TextField(
                                   decoration: InputDecoration(
-                                      labelText: user_email,
                                       enabledBorder: OutlineInputBorder(
                                           borderSide:
-                                              BorderSide(color: Colors.grey)),
+                                          BorderSide(color: Colors.grey)),
                                       border: OutlineInputBorder()),
                                   onChanged: (value) {
                                     setState(() {
@@ -223,19 +221,20 @@ class _SettingAccountState extends State<SettingAccount> {
                                   obscureText: _obscure,
                                   keyboardType: TextInputType.text,
                                   decoration: InputDecoration(
-                                    suffixIcon: IconButton(
-                                      icon: Icon(_obscure
-                                          ? Icons.visibility
-                                          : Icons.visibility_off),
-                                      onPressed: () {
-                                        setState(() {
-                                          _obscure = !_obscure;
-                                        });
-                                      },
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.grey)),
+                                      suffixIcon: IconButton(
+                                        icon: Icon(_obscure
+                                            ? Icons.visibility
+                                            : Icons.visibility_off),
+                                        onPressed: () {
+                                          setState(() {
+                                            _obscure = !_obscure;
+                                          });
+                                        },
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                          borderSide:
+                                          BorderSide(color: Colors.grey)),
+                                      border: OutlineInputBorder()
                                   ),
                                   onChanged: (value) {
                                     setState(() {
@@ -275,20 +274,21 @@ class _SettingAccountState extends State<SettingAccount> {
                                   obscureText: __obscure,
                                   keyboardType: TextInputType.text,
                                   decoration: InputDecoration(
-                                    suffixIcon: IconButton(
-                                      icon: Icon(__obscure
-                                          ? Icons.visibility
-                                          : Icons.visibility_off),
-                                      onPressed: () {
-                                        setState(() {
-                                          __obscure = !__obscure;
-                                        });
-                                      },
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.grey),
-                                    ),
+                                      suffixIcon: IconButton(
+                                        icon: Icon(__obscure
+                                            ? Icons.visibility
+                                            : Icons.visibility_off),
+                                        onPressed: () {
+                                          setState(() {
+                                            __obscure = !__obscure;
+                                          });
+                                        },
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide:
+                                        BorderSide(color: Colors.grey),
+                                      ),
+                                      border: OutlineInputBorder()
                                   ),
                                   onChanged: (value) {
                                     setState(() {
