@@ -30,3 +30,13 @@ class MqttDisconnected extends MqttEvent {
   @override
   List<Object> get props => [];
 }
+
+class MqttPublish extends MqttEvent {
+  final String topic;
+  final Map<String, dynamic> payload;
+
+  MqttPublish({this.topic, this.payload});
+
+  @override
+  List<Object> get props => [topic, payload];
+}
