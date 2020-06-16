@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:tracking_app/blocs/_.dart';
 import 'package:tracking_app/models/_.dart';
-import 'package:tracking_app/styles/index.dart';
 
-class HistoryUtils {
+class Utils {
   static Set<Marker> retriveAllPoints(
     BuildContext context,
     List<Device> devices,
@@ -50,5 +47,31 @@ class HistoryUtils {
         Duration(minutes: history.toInt()),
       ),
     );
+  }
+
+  static bool isInsideARegion(List<LatLng> polygon, LatLng point) {
+    num cacheX = 0, cacheY = 0;
+    num differentX = polygon.last.latitude - point.latitude;
+    num differentY = polygon.last.longitude - point.longitude;
+    int hitTimes = 0;
+
+    for (int i = 0; i < polygon.length; i++) {
+      cacheX = differentX;
+      cacheY = differentY;
+      differentX = polygon[i].latitude - point.latitude;
+      differentY = polygon[i].longitude - point.longitude;
+
+      if (cacheY < 0 && differentY < 0) continue; // both "up" or both "down"
+      if (cacheY > 0 && differentY > 0) continue; // both "up" or both "down"
+      if (cacheX < 0 && differentX < 0) continue; // both points on left
+
+
+      num distance = cacheX - cacheY * (differentX - cacheX) / (differentY - cacheY);
+
+      if (distance == 0) return true; // point on edge
+      if (distance > 0) hitTimes++;
+    }
+
+    return (hitTimes & 1) == 1;
   }
 }

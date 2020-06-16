@@ -14,7 +14,8 @@ router.get('/', async (req,res) => {
 router.post('/', async (req, res) => {
     const ppcoor = new PPCoor({
         ppid: req.body.ppid,
-        coordinate: req.body.coordinate
+        coordinate: req.body.coordinate,
+        place: req.body.place,
     });
     try {
         const savePPCoor = await ppcoor.save();

@@ -13,7 +13,13 @@ abstract class DeviceRepository {
   Future<List<Device>> fetchDevices();
   Future<History> fetchHistory(String deviceId);
   Future<List<Privacy>> fetchPrivacy(String deviceId);
+
+  // Post to database
+  Future<void> postPolicy(Privacy privacy);
   Future<void> postPosition(String deviceId, Position position);
+
+  // Delete from database
+  Future<void> removePrivacy(String id);
 
   // // Store app's state into database
   // Future<void> putDevice(String topic, String payload);
@@ -81,6 +87,17 @@ class LocalDeviceRepository extends DeviceRepository {
   Future<void> postPosition(String deviceId, Position position) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> postPolicy(Privacy privacy) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> removePrivacy(String id) {
+    // TODO: implement removePrivacy
+    throw UnimplementedError();
+  }
 }
 
 class NetworkError extends Error {}
@@ -125,7 +142,40 @@ class SemiRemoteDeviceRepository extends DeviceRepository {
   }
 
   @override
-  Future<List<Privacy>> fetchPrivacy(String deviceId) {
-    throw UnimplementedError();
+  Future<List<Privacy>> fetchPrivacy(String deviceId) async {
+    final url = baseUrl + 'privatepolicy/$deviceId';
+    final headers = {"Content-type": "application/json"};
+    
+    final response = await get(url, headers: headers);
+    
+    try {
+      if (response.statusCode == 200)  {
+        final jsonMap = json.decode(response.body);
+        return Privacy.fromMaps(jsonMap['policies']);
+      }
+    } on Error {
+      throw NetworkError();
+    }
+  }
+
+  @override
+  Future<void> postPolicy(Privacy privacy) async {
+    final url = baseUrl + 'privatepolicy/';
+    final headers = {"Content-type": "application/json"};
+    await post(
+      url,
+      headers: headers,
+      body: json.encode(privacy.toJson()),
+    );
+  }
+
+  @override
+  Future<void> removePrivacy(String id) async {
+    final url = baseUrl + 'privatepolicy/$id';
+    final headers = {"Content-type": "application/json"};
+    await delete(
+      url,
+      headers: headers,
+    );
   }
 }

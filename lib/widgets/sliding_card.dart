@@ -141,87 +141,91 @@ class _SlidingCardState extends State<SlidingCard> {
     Widget _sliderContent(BuildContext context, DeviceState state) {
       return IgnorePointer(
         ignoring: state.devices[widget.index].status == Power.Off,
-        child: Stack(
-          alignment: Alignment.center,
-          children: <Widget>[
-            Container(
-              height: 100,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(40)),
+        child: FlatButton(
+          padding: EdgeInsets.all(0),
+          splashColor: Colors.transparent,
+          onPressed: () {
+            BlocProvider.of<PrivacyBloc>(context).add(
+              FetchPrivacy(
+                null,
+                {'deviceId': state.devices[widget.index].id},
+              ),
+            );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PrivacyScreen(
+                  deviceId: '${state.devices[widget.index].name}',
+                ),
+              ),
+            );
+          },
+          child: Stack(
+            alignment: Alignment.center,
+            children: <Widget>[
+              Container(
+                height: 100,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(40)),
+                      ),
+                      height: 100,
+                      width: 100,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Icon(
+                            Icons.place,
+                            color: Styles.darkText,
+                            size: 36,
+                          ),
+                          Text(
+                            state.devices[widget.index].status == Power.On
+                                ? 'On'
+                                : 'Off',
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              fontFamily: 'Sf',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    height: 100,
-                    width: 100,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    SizedBox(
+                      width: 20.0,
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Icon(
-                          Icons.place,
-                          color: Styles.darkText,
-                          size: 36,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text(
+                            state.devices[widget.index].name,
+                            style: TextStyle(
+                              color: Styles.nearlyBlack,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                         ),
                         Text(
-                          state.devices[widget.index].status == Power.On
-                              ? 'On'
-                              : 'Off',
+                          state.devices[widget.index].id.toString(),
                           style: TextStyle(
-                            fontSize: 14.0,
-                            fontFamily: 'Sf',
-                            fontWeight: FontWeight.bold,
+                            color: Styles.nearlyBlack,
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  SizedBox(
-                    width: 20.0,
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      FlatButton(
-                        onPressed: () {
-                          BlocProvider.of<PrivacyBloc>(context).add(
-                            FetchPrivacy(
-                              null,
-                              {'deviceId': state.devices[widget.index].id},
-                            ),
-                          );
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PrivacyScreen(
-                                deviceId: '${state.devices[widget.index].name}',
-                              ),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          state.devices[widget.index].name,
-                          style: TextStyle(
-                            color: Styles.nearlyBlack,
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        splashColor: Colors.transparent,
-                      ),
-                      Text(
-                        state.devices[widget.index].id.toString(),
-                        style: TextStyle(
-                          color: Styles.nearlyBlack,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            )
-          ],
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       );
     }

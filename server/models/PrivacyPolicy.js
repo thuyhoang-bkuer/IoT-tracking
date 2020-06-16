@@ -18,6 +18,10 @@ const privacyPolicySchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User",
     },
+    place: {
+        type: Schema.Types.ObjectId,
+        ref: "Place",
+    }
 });
 
 const PrivacyPolicy = model("PrivacyPolicy", privacyPolicySchema);
