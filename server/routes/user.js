@@ -27,7 +27,8 @@ router.post('/', async (req, res) => {
 });
 router.get('/:userId', async (req, res) => {
     try {
-        const users = await User.findById(req.params.userId)
+        console.log("----- Get USER ------")
+        const users = await User.find(req.params.email)
         res.json(users);   
     } catch (error) {
         res.json({message: error});
