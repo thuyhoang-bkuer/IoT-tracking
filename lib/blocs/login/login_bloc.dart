@@ -22,17 +22,17 @@ class LoginBloc extends Bloc<LoginEvent,LoginState>{
     if(event is LoginButtonPressed){
       yield LoginLoading();
       try{
-        final bool token = await userRepository.authenticate(username: event.username, password: event.password);
+        final bool token = await userRepository.authenticate(email: event.username, password: event.password);
         if(token){
           authenticationBloc.add(LogIn(token : token));
           yield LoginInitial();
         }
         else{
-          yield LoginFailure(error: null);
+          yield LoginFailure(error: 'wrong username or password!');
         }
       }
       catch(error){
-        yield LoginFailure(error: null);
+        yield LoginFailure(error: error);
       }
     }
   }
