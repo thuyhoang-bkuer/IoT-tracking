@@ -2,13 +2,16 @@
   "name": "broker",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "clients.js",
   "scripts": {
+    "start": "nodemon broker.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Trong Thuy",
   "license": "ISC",
   "dependencies": {
-    "mqtt": "^4.1.0"
+    "mosca": "^2.8.3",
+    "mqtt": "^4.1.0",
+    "nodemon": "^2.0.4"
   }
 }
