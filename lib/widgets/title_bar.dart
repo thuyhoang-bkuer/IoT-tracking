@@ -150,7 +150,42 @@ class _TitleBarState extends State<TitleBar> {
                       MqttInitialize(
                         new MqttClientWrapper(
                           onDisconnectedCallback: () {
-                            BlocProvider.of<MqttBloc>(context).add(MqttDisconnected());
+                            BlocProvider.of<MqttBloc>(context)
+                                .add(MqttDisconnected());
+                          },
+                          onDataReceivedCallback: (data) {
+                            final devices = BlocProvider.of<DeviceBloc>(context).state.devices;
+                            Map<String, dynamic> payload = json.decode(data);
+
+                            if (payload['action'] == 'response/device/list') {
+                              final devices = payload['data'];
+                              BlocProvider.of<DeviceBloc>(context).add(
+                                FetchDevices(
+                                  topic: null,
+                                  payload: {"devices": devices},
+                                ),
+                              );
+                            } 
+                            else if (payload['action'] == 'response/device/gps') {
+                              String id = payload['id'];
+                              final device = devices.where((d) => d.id == id).toList()[0];
+                              final index = devices.indexOf(device);
+                              final map = {
+                                "index": index,
+                                "deviceId": device.id,
+                                "latitude": payload['data'][0],
+                                "longitude": payload['data'][1],
+                              };
+                              BlocProvider.of<DeviceBloc>(context).add(
+                                SubcribePosition(payload: map),
+                              );
+                            }
+                            // BlocProvider.of<MqttBloc>(context).add(
+                            //   MqttReceived(
+                            //     topic: null,
+                            //     payload: payload,
+                            //   ),
+                            // );
                           },
                         ),
                       ),

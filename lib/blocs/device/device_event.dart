@@ -41,3 +41,8 @@ class LocateDevice extends DeviceEvent {
   @override
   List<Object> get props => [topic, payload];
 }
+
+class ClearDevices extends DeviceEvent {
+  @override
+  List<Object> get props => [];
+}

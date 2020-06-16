@@ -15,7 +15,7 @@ class MqttClientWrapper {
   MqttConfig _config;
   final VoidCallback onConnectedCallback;
   final VoidCallback onDisconnectedCallback;
-  final Function(dynamic) onDataReceivedCallback;
+  final Function(String) onDataReceivedCallback;
 
   MqttClientWrapper({
     this.onConnectedCallback,
