@@ -24,11 +24,16 @@ class _MqttFormState extends State<MqttForm> {
   @override
   void initState() {
     super.initState();
-    _serverUri = '13.76.250.158';
+    // _serverUri = '13.76.250.158';
+    // _port = '1883';
+    // _topic = 'Topic/GPS';
+    // _username = 'BKvm2';
+    // _password = 'Hcmut_CSE_2020';
+    _serverUri = '192.168.1.68';
     _port = '1883';
     _topic = 'Topic/GPS';
-    _username = 'BKvm2';
-    _password = 'Hcmut_CSE_2020';
+    _username = '';
+    _password = '';
   }
 
   @override
@@ -137,7 +142,8 @@ class _MqttFormState extends State<MqttForm> {
                     Expanded(
                       flex: 6,
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 8.0, right: 8.0, bottom: 8.0),
+                        padding: const EdgeInsets.only(
+                            top: 8.0, right: 8.0, bottom: 8.0),
                         child: TextFormField(
                           initialValue: _serverUri,
                           decoration: InputDecoration(
@@ -256,6 +262,10 @@ class _MqttFormState extends State<MqttForm> {
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 onPressed: () {
+                  BlocProvider.of<MqttBloc>(context).add(MqttPublish(
+                    topic: null,
+                    payload: {'"action"': '"request/disconnect"'},
+                  ));
                   BlocProvider.of<MqttBloc>(context).add(MqttDisconnecting());
                 },
                 child: Text(

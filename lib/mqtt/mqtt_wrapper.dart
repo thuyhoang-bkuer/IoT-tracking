@@ -58,7 +58,7 @@ class MqttClientWrapper {
   void _setupMqttClient() {
     final MqttConnectMessage connectMessage = MqttConnectMessage()
         .withClientIdentifier('Mqtt_MyClientUniqueId')
-        .keepAliveFor(20) // Must agree with the keep alive set above or not set
+        .keepAliveFor(1000) // Must agree with the keep alive set above or not set
         .startClean() // Non persistent session for testing
         .authenticateAs(
           _config.username,
@@ -102,6 +102,8 @@ class MqttClientWrapper {
   void _onSubscribed(String topic) {
     log('[MQTT Client] Subscription confirmed for topic $topic');
     subscriptionStatus = MqttClientSubcriptionState.Idle;
+    publishMessage({'"action"': '"request/device/list"'}.toString());
+    publishMessage({'"action"': '"request/device/gps"'}.toString());
   }
 
   void _onDisconnected() {

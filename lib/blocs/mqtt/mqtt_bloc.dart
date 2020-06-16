@@ -27,6 +27,12 @@ class MqttBloc extends Bloc<MqttEvent, MqttState> {
         mqttClientWrapper = event.mqttClientWrapper;
         yield MqttInitial();
       }
+      else if (event is MqttPublish) {
+        if (state is MqttUnitial) {
+          throw Error();
+        }
+        mqttClientWrapper.publishMessage(event.payload.toString());
+      }
       else if (event is MqttConnect) {
         if (state is MqttUnitial) {
           throw Error();
