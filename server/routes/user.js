@@ -44,7 +44,7 @@ router.get('/admin/:adminId', async (req, res) => {
 });
 router.get('/email/:userEmail', async (req, res) => {
     try {
-        const users = await User.find('email': req.params.userEmail)
+        const users = await User.find({'email': req.params.userEmail})
         res.json(users);   
     } catch (error) {
         res.json({message: error});
