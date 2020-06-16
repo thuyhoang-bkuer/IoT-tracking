@@ -23,7 +23,7 @@ const options = {
 }
 
 function generateGPS(deviceId) {
-	return gps[deviceId].map(item => item + (Math.random() - 0.5) * 0.007);
+	gps[deviceId] = gps[deviceId].map(item => item + (Math.random() - 0.5) * 0.007);
 	return gps[deviceId];
 }
 
@@ -108,6 +108,7 @@ device_0.on('message', (topic, message) => {
 			timer_0 = setInterval(() => {
 				const res = {
 					action: 'response/device/gps',
+					id: '1000',
 					data: generateGPS(0)
 				}
 				master.publish(mobileTopic, JSON.stringify(res), {
@@ -116,7 +117,7 @@ device_0.on('message', (topic, message) => {
 				}, (error) => {
 					console.log(error || `[Device 0]${req.action} - publish Success`)
 				})
-			}, 3000)
+			}, 12000)
 		}
 		else if (req.action === 'request/disconnect') {
 			clearInterval(timer_0)
@@ -135,6 +136,7 @@ device_1.on('message', (topic, message) => {
 			timer_1 = setInterval(() => {
 				const res = {
 					action: 'response/device/gps',
+					id: '1001',
 					data: generateGPS(1)
 				}
 				master.publish(mobileTopic, JSON.stringify(res), {
@@ -143,7 +145,7 @@ device_1.on('message', (topic, message) => {
 				}, (error) => {
 					console.log(error || `[Device 1]${req.action} - publish Success`)
 				})
-			}, 3000)
+			}, 10000)
 		}
 		else if (req.action === 'request/disconnect') {
 			clearInterval(timer_1)
