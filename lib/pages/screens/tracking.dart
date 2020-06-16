@@ -99,6 +99,7 @@ class _TrackingScreenState extends State<TrackingScreen>
               child: TitleBar(
                 primaryColor: widget.primaryColor,
                 pageIndex: 1,
+                usedMqtt: true,
               ),
             ),
             body: body,

@@ -19,8 +19,14 @@ class MqttConnect extends MqttEvent {
   List<Object> get props => [topic, payload];
 }
 
-class MqttDisconnect extends MqttEvent {
-  MqttDisconnect();
+class MqttDisconnecting extends MqttEvent {
+  MqttDisconnecting();
+  @override
+  List<Object> get props => [];
+}
+
+class MqttDisconnected extends MqttEvent {
+  MqttDisconnected();
   @override
   List<Object> get props => [];
 }

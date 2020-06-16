@@ -150,7 +150,7 @@ class _TitleBarState extends State<TitleBar> {
                       MqttInitialize(
                         new MqttClientWrapper(
                           onDisconnectedCallback: () {
-                            // BlocProvider.of<MqttBloc>(context).add(MqttDisconnect());
+                            BlocProvider.of<MqttBloc>(context).add(MqttDisconnected());
                           },
                         ),
                       ),

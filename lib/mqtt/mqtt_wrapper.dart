@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
+import 'package:tracking_app/data/device_repository.dart';
 import 'package:tracking_app/models/_.dart';
 
 class MqttClientWrapper {
@@ -79,14 +80,11 @@ class MqttClientWrapper {
       log('[MQTT Client] Mosquitto client connecting....');
       connectionState = MqttClientConnectionState.Connecting;
       status = await client.connect(_config.username, _config.password);
-    } on SocketException catch (se) {
-      log('[MQTT Client] Exception - $se');
-      connectionState = MqttClientConnectionState.ErrorWhenConnecting;
-      client.disconnect();
-    } on Exception catch (e) {
+    } catch (e) {
       log('[MQTT Client] Exception - $e');
       connectionState = MqttClientConnectionState.ErrorWhenConnecting;
       client.disconnect();
+      throw NetworkError();
     }
     
 

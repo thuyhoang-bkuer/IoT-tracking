@@ -256,7 +256,7 @@ class _MqttFormState extends State<MqttForm> {
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 onPressed: () {
-                  BlocProvider.of<MqttBloc>(context).add(MqttDisconnect());
+                  BlocProvider.of<MqttBloc>(context).add(MqttDisconnecting());
                 },
                 child: Text(
                   'Disconnect',
