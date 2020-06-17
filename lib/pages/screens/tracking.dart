@@ -252,7 +252,9 @@ class _TrackingScreenState extends State<TrackingScreen>
         return GoogleMap(
           initialCameraPosition: CameraPosition(
             target: LatLng(
-                widget.constant['latitude'], widget.constant['longitude']),
+              widget.constant['latitude'],
+              widget.constant['longitude'],
+            ),
             zoom: widget.constant['zoom'],
           ),
           markers: markers,

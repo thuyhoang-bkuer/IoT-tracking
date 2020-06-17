@@ -267,7 +267,6 @@ class _MqttFormState extends State<MqttForm> {
                     payload: {'"action"': '"request/disconnect"'},
                   ));
                   BlocProvider.of<MqttBloc>(context).add(MqttDisconnecting());
-                  
                 },
                 child: Text(
                   'Disconnect',

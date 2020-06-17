@@ -22,33 +22,46 @@ class Utils {
   }
 
   static LatLngBounds retriveBoundOf(List<LatLng> points) {
-    LatLng northeast = LatLng(-180, -180), southwest = LatLng(180, 180);
+    double minLat = 180, minLong = 180, maxLat = -180, maxLong = -180;
 
     points.forEach((point) {
-      if (northeast.latitude < point.latitude) {
-        northeast = point;
+      if (maxLat < point.latitude) {
+        maxLat = point.latitude;
       }
-      if (southwest.latitude > point.latitude) {
-        southwest = point;
+
+      if (minLat > point.latitude) {
+        minLat = point.latitude;
+      }
+
+      if (maxLong < point.longitude) {
+        maxLong = point.longitude;
+      }
+
+      if (minLong > point.longitude) {
+        minLong = point.longitude;
       }
     });
 
-    if (northeast.longitude - southwest.longitude < 0.01) {
-      southwest = LatLng(southwest.latitude, southwest.longitude - 0.01);
-      northeast = LatLng(northeast.latitude, northeast.longitude + 0.01);
+    if (maxLong - minLong < 0.01) {
+      maxLong += 0.005;
+      minLong -= 0.005;
     }
-    if (northeast.latitude - southwest.latitude < 0.01) {
-      southwest = LatLng(southwest.latitude - 0.005, southwest.longitude);
-      northeast = LatLng(northeast.latitude - 0.005, northeast.longitude);
+    if (maxLat - minLat < 0.01) {
+      maxLat += 0.005;
+      minLat -= 0.005;
     }
 
-    return LatLngBounds(southwest: southwest, northeast: northeast);
+    return LatLngBounds(
+      southwest: LatLng(minLat, minLong),
+      northeast: LatLng(maxLat, maxLong),
+    );
   }
 
   static String retriveDate(DateTime timestamp, double history) {
     return DateFormat('MMM dd, ' 'yy\n   hh:mm aaa').format(
       timestamp.add(
-        Duration(minutes: history.toInt()),
+        // Hanoi 7+
+        Duration(hours: 7,minutes: history.toInt()),
       ),
     );
   }
@@ -69,8 +82,8 @@ class Utils {
       if (cacheY > 0 && differentY > 0) continue; // both "up" or both "down"
       if (cacheX < 0 && differentX < 0) continue; // both points on left
 
-
-      num distance = cacheX - cacheY * (differentX - cacheX) / (differentY - cacheY);
+      num distance =
+          cacheX - cacheY * (differentX - cacheX) / (differentY - cacheY);
 
       if (distance == 0) return true; // point on edge
       if (distance > 0) hitTimes++;

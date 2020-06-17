@@ -3,8 +3,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:tracking_app/blocs/_.dart';
+import 'package:tracking_app/models/enums.dart';
 import 'package:tracking_app/mqtt/mqtt_wrapper.dart';
 import 'package:tracking_app/pages/screens/mqtt.dart';
 import 'package:tracking_app/styles/index.dart';
@@ -152,10 +152,13 @@ class _TitleBarState extends State<TitleBar> {
                           onDisconnectedCallback: () {
                             BlocProvider.of<MqttBloc>(context)
                                 .add(MqttDisconnected());
-                            BlocProvider.of<DeviceBloc>(context).add(ClearDevices());
+                            BlocProvider.of<DeviceBloc>(context)
+                                .add(ClearDevices());
                           },
                           onDataReceivedCallback: (data) {
-                            final devices = BlocProvider.of<DeviceBloc>(context).state.devices;
+                            final devices = BlocProvider.of<DeviceBloc>(context)
+                                .state
+                                .devices;
                             Map<String, dynamic> payload = json.decode(data);
 
                             if (payload['action'] == 'response/device/list') {
@@ -166,20 +169,23 @@ class _TitleBarState extends State<TitleBar> {
                                   payload: {"devices": devices},
                                 ),
                               );
-                            } 
-                            else if (payload['action'] == 'response/device/gps') {
+                            } else if (payload['action'] ==
+                                'response/device/gps') {
                               String id = payload['id'];
-                              final device = devices.where((d) => d.id == id).toList()[0];
+                              final device =
+                                  devices.where((d) => d.id == id).toList()[0];
                               final index = devices.indexOf(device);
-                              final map = {
-                                "index": index,
-                                "deviceId": device.id,
-                                "latitude": payload['data'][0],
-                                "longitude": payload['data'][1],
-                              };
-                              BlocProvider.of<DeviceBloc>(context).add(
-                                SubcribePosition(payload: map),
-                              );
+                              if (device.status == Power.On) {
+                                final map = {
+                                  "index": index,
+                                  "deviceId": device.id,
+                                  "latitude": payload['data'][0],
+                                  "longitude": payload['data'][1],
+                                };
+                                BlocProvider.of<DeviceBloc>(context).add(
+                                  SubcribePosition(payload: map),
+                                );
+                              }
                             }
                             // BlocProvider.of<MqttBloc>(context).add(
                             //   MqttReceived(
