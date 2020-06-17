@@ -62,7 +62,7 @@ class LoginPage extends StatelessWidget {
           );
         },
         child: LoginForm(),
-      ),
+      )
     );
   }
 }
@@ -86,7 +86,6 @@ class _LoginFormState extends State<LoginForm> {
         ),
       );
     }
-
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {},
       child: BlocBuilder<LoginBloc, LoginState>(

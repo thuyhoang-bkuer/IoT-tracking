@@ -33,6 +33,8 @@ dependencies:
   custom_switch: ^0.0.1
   flutter_slidable: ^0.5.4
   http: ^0.12.1
+  password: ^1.0.0
+  typed_data: ^1.1.6
 
 dev_dependencies:
   flutter_test:
