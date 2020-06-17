@@ -209,11 +209,11 @@ class RemoteDeviceRepository extends DeviceRepository {
   Future<void> postPosition(String deviceId, Position position) async {
     final url = baseUrl + 'location/';
     final headers = {"Content-type": "application/json"};
-    // post(
-    //   url,
-    //   headers: headers,
-    //   body: json.encode(position.toJson()..addAll({'deviceId': deviceId})),
-    // );
+    post(
+      url,
+      headers: headers,
+      body: json.encode(position.toJson()..addAll({'deviceId': deviceId})),
+    );
   }
 
   @override

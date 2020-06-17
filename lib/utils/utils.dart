@@ -34,8 +34,12 @@ class Utils {
     });
 
     if (northeast.longitude - southwest.longitude < 0.01) {
-      southwest = LatLng(southwest.latitude, southwest.longitude - 0.005);
-      northeast = LatLng(northeast.latitude, northeast.longitude + 0.005);
+      southwest = LatLng(southwest.latitude, southwest.longitude - 0.01);
+      northeast = LatLng(northeast.latitude, northeast.longitude + 0.01);
+    }
+    if (northeast.latitude - southwest.latitude < 0.01) {
+      southwest = LatLng(southwest.latitude - 0.005, southwest.longitude);
+      northeast = LatLng(northeast.latitude - 0.005, northeast.longitude);
     }
 
     return LatLngBounds(southwest: southwest, northeast: northeast);

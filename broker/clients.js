@@ -117,7 +117,7 @@ device_0.on('message', (topic, message) => {
 				}, (error) => {
 					console.log(error || `[Device 0]${req.action} - publish Success`)
 				})
-			}, 12000)
+			}, 5000)
 		}
 		else if (req.action === 'request/disconnect') {
 			clearInterval(timer_0)
@@ -145,7 +145,7 @@ device_1.on('message', (topic, message) => {
 				}, (error) => {
 					console.log(error || `[Device 1]${req.action} - publish Success`)
 				})
-			}, 10000)
+			}, 4000)
 		}
 		else if (req.action === 'request/disconnect') {
 			clearInterval(timer_1)

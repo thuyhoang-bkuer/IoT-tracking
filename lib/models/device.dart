@@ -29,9 +29,12 @@ class Device extends Equatable {
 
     return Device(
       id: map['id'],
-      status: map.containsKey('status') ? Power.values[map['status']] : Power.On,
+      status:
+          map.containsKey('status') ? Power.values[map['status']] : Power.On,
       name: map['name'],
-      position: map.containsKey('position') ? Position.fromMap(map['position']) : null,
+      position: map.containsKey('position')
+          ? Position.fromMap(map['position'])
+          : Position(latitude: 10.7, longitude: 106.6),
     );
   }
 

@@ -152,6 +152,7 @@ class _TitleBarState extends State<TitleBar> {
                           onDisconnectedCallback: () {
                             BlocProvider.of<MqttBloc>(context)
                                 .add(MqttDisconnected());
+                            BlocProvider.of<DeviceBloc>(context).add(ClearDevices());
                           },
                           onDataReceivedCallback: (data) {
                             final devices = BlocProvider.of<DeviceBloc>(context).state.devices;
