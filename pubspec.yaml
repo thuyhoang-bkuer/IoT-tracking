@@ -34,6 +34,8 @@ dependencies:
   flutter_slidable: ^0.5.4
   http: ^0.12.1
   mqtt_client: ^7.2.1
+  password: ^1.0.0
+  typed_data: ^1.1.6
 
 dev_dependencies:
   flutter_test:

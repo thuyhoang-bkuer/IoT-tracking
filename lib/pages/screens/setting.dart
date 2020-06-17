@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:tracking_app/pages/screens/setting_account.dart';
 import 'package:tracking_app/pages/screens/setting_device.dart';
 import 'package:tracking_app/pages/screens/setting_info.dart';
-import 'package:tracking_app/widgets/title_bar.dart';
 
 class SettingScreen extends StatefulWidget {
   final Color primaryColor;
