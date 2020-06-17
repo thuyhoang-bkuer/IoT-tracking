@@ -24,7 +24,10 @@ class UserRepository {
     try {
       if (response.statusCode == 200) {
         final jLog = json.decode(response.body);
-//        print(Password.verify(password, hash));
+//        print(Password.hash(password, new PBKDF2()));
+        if(jLog.length == 0) {
+          return false;
+        }
         if(password == "" || email == "")
           return false;
         if((jLog[0]["email"] == email)){
