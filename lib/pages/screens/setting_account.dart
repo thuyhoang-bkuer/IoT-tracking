@@ -139,10 +139,9 @@ class _SettingAccountState extends State<SettingAccount> {
                                     horizontal: 10, vertical: 10),
                                 child: TextField(
                                   decoration: InputDecoration(
-                                      labelText: name_user,
                                       enabledBorder: OutlineInputBorder(
                                           borderSide:
-                                              BorderSide(color: Colors.grey)),
+                                          BorderSide(color: Colors.grey)),
                                       border: OutlineInputBorder()),
                                   onChanged: (value) {
                                     setState(() {
@@ -180,10 +179,9 @@ class _SettingAccountState extends State<SettingAccount> {
                                     horizontal: 10, vertical: 10),
                                 child: TextField(
                                   decoration: InputDecoration(
-                                      labelText: user_email,
                                       enabledBorder: OutlineInputBorder(
                                           borderSide:
-                                              BorderSide(color: Colors.grey)),
+                                          BorderSide(color: Colors.grey)),
                                       border: OutlineInputBorder()),
                                   onChanged: (value) {
                                     setState(() {
@@ -235,7 +233,8 @@ class _SettingAccountState extends State<SettingAccount> {
                                     ),
                                     enabledBorder: OutlineInputBorder(
                                         borderSide:
-                                            BorderSide(color: Colors.grey)),
+                                        BorderSide(color: Colors.grey)),
+                                      border: OutlineInputBorder()
                                   ),
                                   onChanged: (value) {
                                     setState(() {
@@ -287,8 +286,9 @@ class _SettingAccountState extends State<SettingAccount> {
                                     ),
                                     enabledBorder: OutlineInputBorder(
                                       borderSide:
-                                          BorderSide(color: Colors.grey),
+                                      BorderSide(color: Colors.grey),
                                     ),
+                                      border: OutlineInputBorder()
                                   ),
                                   onChanged: (value) {
                                     setState(() {
