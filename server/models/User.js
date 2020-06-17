@@ -20,7 +20,16 @@ const userSchema = new Schema({
             return true;
         },
     },
-
+    username: {
+        type: String,
+        required: true,
+        validate: (value) => {
+            if (value == "") {
+                throw new Error("Username length must be greater than 0");
+            }
+            return true;
+        },	
+    },
     admin: {
         type: Schema.Types.ObjectId,
         ref: "User",
