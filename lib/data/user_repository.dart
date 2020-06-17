@@ -12,9 +12,11 @@ import 'package:password/password.dart';
 class NetworkErr extends Error {}
 
 class UserRepository {
-  final String baseUrl = "http://172.17.16.57:3000/";
-  Future<bool> authenticate(
-      {@required String email, @required String password}) async {
+  final String baseUrl = "http://192.168.1.68:3000/";
+  Future<bool> authenticate({
+    @required String email,
+    @required String password,
+  }) async {
     final url = baseUrl + 'user/$email';
     final headers = {"Content-type": "application/json"};
     final response = await get(url, headers: headers);
@@ -22,13 +24,14 @@ class UserRepository {
     try {
       if (response.statusCode == 200) {
         final jLog = json.decode(response.body);
-//        print(Password.hash(password, new PBKDF2()));
+        // print(Password.hash(password, new PBKDF2()));
         if (jLog.length == 0) {
           return false;
         }
         if (password == "" || email == "") return false;
         if ((jLog[0]["email"] == email)) {
-          return Password.verify(password, jLog[0]["password"]);
+          return Future.sync(
+              () => Password.verify(password, jLog[0]["password"]));
         } else
           return false;
       } else

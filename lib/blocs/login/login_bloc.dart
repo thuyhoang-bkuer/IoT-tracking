@@ -28,11 +28,11 @@ class LoginBloc extends Bloc<LoginEvent,LoginState>{
           yield LoginInitial();
         }
         else{
-          yield LoginFailure(error: 'wrong username or password!');
+          yield LoginFailure(error: 'Wrong username or password!');
         }
       }
       catch(error){
-        yield LoginFailure(error: error);
+        yield LoginFailure(error: 'An error occurs!');
       }
     }
   }

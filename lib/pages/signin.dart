@@ -92,7 +92,7 @@ class _LoginFormState extends State<LoginForm> {
         builder: (context, state) {
           Widget expanded = null;
           if (state is LoginLoading) {
-            expanded = CircularProgressIndicator();
+            expanded = Center(child: CircularProgressIndicator());
           } else if (state is LoginFailure) {
             expanded = Text(
               "Your email or password is incorrect.",
@@ -144,10 +144,13 @@ class _LoginFormState extends State<LoginForm> {
                         Container(
                           margin: EdgeInsets.only(bottom: 20),
                           decoration: BoxDecoration(
-                              border: Border.all(
-                                  width: 2, color: Colors.white.withAlpha(80)),
-                              borderRadius: BorderRadius.circular(28),
-                              color: Colors.transparent),
+                            border: Border.all(
+                              width: 2,
+                              color: Colors.white.withAlpha(80),
+                            ),
+                            borderRadius: BorderRadius.circular(28),
+                            color: Colors.transparent,
+                          ),
                           child: TextField(
                             decoration: InputDecoration(
                                 icon: Padding(
