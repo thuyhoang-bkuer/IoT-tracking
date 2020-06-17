@@ -32,7 +32,7 @@ app.get('/', (req, res) => {
 });
 
 
-mongoose.connect('mongodb://localhost/models', {useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true });
+mongoose.connect(process.env.DB_CONNECTION, {useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true });
 mongoose.connection.once("open", () => console.log("Connected")).on("error", error => {
     console.log("Ur error ", error)
 });

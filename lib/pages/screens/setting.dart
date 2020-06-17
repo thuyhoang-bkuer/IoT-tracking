@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:tracking_app/pages/screens/setting_account.dart';
 import 'package:tracking_app/pages/screens/setting_device.dart';
 import 'package:tracking_app/pages/screens/setting_info.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:tracking_app/blocs/authentication/authentication_bloc.dart';
 
 class SettingScreen extends StatefulWidget {
   final Color primaryColor;
@@ -260,14 +263,66 @@ class _SettingScreenState extends State<SettingScreen> {
                 children: <Widget>[
                   buildContent(Icons.group, "Chuyển tài khoản", false, true,
                       widget.primaryColor, null),
-                  buildContent(Icons.exit_to_app, "Đăng xuất", false, false,
-                      Colors.pink, null)
-                ],
+                  Container(
+                    color: Colors.white,
+                    height: 48,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Container(
+                            padding: const EdgeInsets.only(
+                              left: 17,
+                              right: 13,
+                              top: 13,
+                              bottom: 13,
+                            ),
+                            child: Icon(
+                              Icons.exit_to_app,
+                              color: Colors.pink
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 5,
+                          child: Container(
+                            height: 48,
+                            padding: const EdgeInsets.all(4),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Container(
+                                    child: Text(
+                                      "Đăng xuất",
+                                      style: TextStyle(
+                                        fontFamily: "Roboto",
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  child: IconButton(
+                                    icon: Icon(
+                                      Icons.keyboard_arrow_right,
+                                      color: Colors.grey,
+                                    ),
+                                    onPressed: () => BlocProvider.of<AuthenticationBloc>(context).add(LogOut()),
+                                    ),
+                                  )
+                                ]
+                              )
+                            ),
+                          ),
+                        ]
+                      ),
+                    ),
+                  ]
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
   }
 }
