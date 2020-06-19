@@ -48,7 +48,7 @@ It uses some IoT technologies such as _IoT Gateway_, _MQTT protocol_ & most impo
 
 ## Build & Run
 
-1.  Make sure your MongoDB's service is running on your computer. Then run the server first by running the following command in `root` directory:
+1.  Make sure your MongoDB's service is running on your computer. Then run the server by running the following command in `root` directory:
     ```shell
     $ yarn start
     ```
@@ -74,7 +74,7 @@ It uses some IoT technologies such as _IoT Gateway_, _MQTT protocol_ & most impo
 |                                                                                                                               Info                                                                                                                                |  Role  | Work                                                                       |
 | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :----: | -------------------------------------------------------------------------- |
 | <div style="width: 200px"><a href="https://github.com/vuong-cuong-phoenix"><img src="https://avatars0.githubusercontent.com/u/55590597?s=460&u=4313842c5a0c3a365cb7af7c8607e5189d465230&v=4" alt="" width="48px" height="48px"/> <br/> Vuong Chi Cuong </a></div> | Leader | Project manager, UI/UX design, architecture design, report, documentation. |
-|                      <div style="width: 200px"><a href="https://github.com/thuyhoang-bkuer"><img src="https://avatars2.githubusercontent.com/u/55725741?s=460&v=4" alt="" width="48px" height="48px"/> <br/> Hoang Vu Trong Thuy </a></div>                       |  Core  | Major UI/UX implementation, simulated IoT enviroment.                      |
+|                      <div style="width: 200px"><a href="https://github.com/thuyhoang-bkuer"><img src="https://avatars2.githubusercontent.com/u/55725741?s=460&v=4" alt="" width="48px" height="48px"/> <br/> Hoang Vu Trong Thuy </a></div>                       |  Core  | Major UI/UX implementation, core funtionality, simulate IoT enviroment.    |
 |                              <div style="width: 200px"><a href="https://github.com/WeOneTeam"><img src="https://avatars3.githubusercontent.com/u/54506207?s=460&v=4" alt="" width="48px" height="48px"/> <br/> Bui Ba Anh </a></div>                              |  Core  | Minor UI/UX implementation, Authentication service.                        |
-|                         <div style="width: 200px"><a href="https://github.com/ductuantruong"><img src="https://avatars1.githubusercontent.com/u/36566080?s=460&v=4" alt="" width="48px" height="48px"/> <br/> Truong Duc Tuan </a></div>                          |  Core  | Database design & implementation.                                          |
+|                         <div style="width: 200px"><a href="https://github.com/ductuantruong"><img src="https://avatars1.githubusercontent.com/u/36566080?s=460&v=4" alt="" width="48px" height="48px"/> <br/> Truong Duc Tuan </a></div>                          |  Core  | Database design & implementation, REST API.                                |
 |                           <div style="width: 200px"><a href="https://github.com/VinhLe-Zero1"><img src="https://avatars1.githubusercontent.com/u/43360158?s=460&v=4" alt="" width="48px" height="48px"/> <br/> Le Trung Vinh </a></div>                           |  Core  | Database design & implementation.                                          |
