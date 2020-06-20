@@ -14,8 +14,8 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
-  String name_user = "Bá Anh Bùi";
-  String email = "buibaanh0405@gmail.com";
+  String name_user = "Hoang Vu Trong Thuy";
+  String email = "thuy.hoang_bkuer17@hcmut.edu.vn";
 
   Container buildContent(
     IconData icon,

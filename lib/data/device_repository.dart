@@ -103,7 +103,7 @@ class LocalDeviceRepository extends DeviceRepository {
 class NetworkError extends Error {}
 
 class SemiRemoteDeviceRepository extends DeviceRepository {
-  final String baseUrl = 'http://192.168.1.68:3000/';
+  final String baseUrl = 'http://10.0.2.2:3000/';
   @override
   Future<List<Device>> fetchDevices(dynamic devices) async {
     final jsonData = await rootBundle.loadString('assets/storage/devices.json');
@@ -181,7 +181,7 @@ class SemiRemoteDeviceRepository extends DeviceRepository {
 }
 
 class RemoteDeviceRepository extends DeviceRepository {
-  final String baseUrl = 'http://192.168.1.68:3000/';
+  final String baseUrl = 'http://10.0.2.2:3000/';
   @override
   Future<List<Device>> fetchDevices(dynamic payload) async {
     return Future.delayed(Duration(seconds: 1), () {
