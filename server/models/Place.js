@@ -11,5 +11,5 @@ const placeSchema = new Schema({
 });
 
 const Place = model("Place",placeSchema);
-
+    
 module.exports = Place;
