@@ -62,7 +62,7 @@ It uses some IoT technologies such as _IoT Gateway_, _MQTT protocol_ & most impo
     ```shell
     $ node ./broker/client.js
     ```
-4.  Make sure you're having a **Mobile Emulator** running. And finally, build & run Flutter's app:
+4.  Make sure you have a **Mobile Emulator** running. And finally, build & run Flutter's app:
     ```shell
     $ flutter run
     ```
