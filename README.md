@@ -60,7 +60,7 @@ It uses some IoT technologies such as _IoT Gateway_, _MQTT protocol_ & most impo
     ```
 3.  _(Optional)_ If you want to test our simulated data, you can run this command:
     ```shell
-    $ node ./broker/client.js
+    $ node ./broker/clients.js
     ```
 4.  Make sure you have a **Mobile Emulator** running. And finally, build & run Flutter's app:
     ```shell
