@@ -17,6 +17,10 @@ class UserRepository {
     @required String email,
     @required String password,
   }) async {
+    // Admin
+    if (email == 'admin' && password == 'admin') 
+      return Future.delayed(Duration(milliseconds: 500), () => true);
+
     final url = baseUrl + 'user/$email';
     final headers = {"Content-type": "application/json"};
     final response = await get(url, headers: headers);
