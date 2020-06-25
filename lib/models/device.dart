@@ -24,12 +24,17 @@ class Device extends Equatable {
     return list;
   }
 
-  static Device fromMap(dynamic map) {
+  static Device fromMap(dynamic message) {
+    Map<String, dynamic> map = message;
+
     return Device(
       id: map['id'],
-      status: Power.values[map['status']],
+      status:
+          map.containsKey('status') ? Power.values[map['status']] : Power.On,
       name: map['name'],
-      position: Position.fromMap(map['position']),
+      position: map.containsKey('position')
+          ? Position.fromMap(map['position'])
+          : Position(latitude: 10.7, longitude: 106.6),
     );
   }
 

@@ -10,7 +10,7 @@ abstract class DeviceRepository {
   // Publish messages into IoT server
 
   // Retrive from database
-  Future<List<Device>> fetchDevices();
+  Future<List<Device>> fetchDevices(dynamic devices);
   Future<History> fetchHistory(String deviceId);
   Future<List<Privacy>> fetchPrivacy(String deviceId);
 
@@ -28,7 +28,7 @@ abstract class DeviceRepository {
 
 class LocalDeviceRepository extends DeviceRepository {
   @override
-  Future<List<Device>> fetchDevices() {
+  Future<List<Device>> fetchDevices(dynamic devices) async {
     return Future.delayed(Duration(seconds: 1), () {
       final random = Random();
 
@@ -103,9 +103,9 @@ class LocalDeviceRepository extends DeviceRepository {
 class NetworkError extends Error {}
 
 class SemiRemoteDeviceRepository extends DeviceRepository {
-  final String baseUrl = 'http://192.168.1.68:3000/';
+  final String baseUrl = 'http://10.0.2.2:3000/';
   @override
-  Future<List<Device>> fetchDevices() async {
+  Future<List<Device>> fetchDevices(dynamic devices) async {
     final jsonData = await rootBundle.loadString('assets/storage/devices.json');
     final jsonMap = json.decode(jsonData);
 
@@ -179,3 +179,79 @@ class SemiRemoteDeviceRepository extends DeviceRepository {
     );
   }
 }
+
+class RemoteDeviceRepository extends DeviceRepository {
+  final String baseUrl = 'http://10.0.2.2:3000/';
+  @override
+  Future<List<Device>> fetchDevices(dynamic payload) async {
+    return Future.delayed(Duration(seconds: 1), () {
+      return Device.fromMaps(payload['devices']);
+    });
+  }
+
+  @override
+  Future<History> fetchHistory(String deviceId) async {
+    final url = baseUrl + 'location/$deviceId';
+    final headers = {"Content-type": "application/json"};
+    final response = await get(url, headers: headers);
+
+    try {
+      if (response.statusCode == 200) {
+        return History.fromJson(json.decode(response.body));
+      } else
+        throw NetworkError();
+    } on Error {
+      throw Error;
+    }
+  }
+
+  @override
+  Future<void> postPosition(String deviceId, Position position) async {
+    final url = baseUrl + 'location/';
+    final headers = {"Content-type": "application/json"};
+    post(
+      url,
+      headers: headers,
+      body: json.encode(position.toJson()..addAll({'deviceId': deviceId})),
+    );
+  }
+
+  @override
+  Future<List<Privacy>> fetchPrivacy(String deviceId) async {
+    final url = baseUrl + 'privatepolicy/$deviceId';
+    final headers = {"Content-type": "application/json"};
+    
+    final response = await get(url, headers: headers);
+    
+    try {
+      if (response.statusCode == 200)  {
+        final jsonMap = json.decode(response.body);
+        return Privacy.fromMaps(jsonMap['policies']);
+      }
+    } on Error {
+      throw NetworkError();
+    }
+  }
+
+  @override
+  Future<void> postPolicy(Privacy privacy) async {
+    final url = baseUrl + 'privatepolicy/';
+    final headers = {"Content-type": "application/json"};
+    await post(
+      url,
+      headers: headers,
+      body: json.encode(privacy.toJson()),
+    );
+  }
+
+  @override
+  Future<void> removePrivacy(String id) async {
+    final url = baseUrl + 'privatepolicy/$id';
+    final headers = {"Content-type": "application/json"};
+    await delete(
+      url,
+      headers: headers,
+    );
+  }
+}
+

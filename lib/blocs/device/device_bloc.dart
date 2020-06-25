@@ -25,7 +25,7 @@ class DeviceBloc extends Bloc<DeviceEvent, DeviceState> {
     yield DeviceLoading(state.devices);
     if (event is FetchDevices) {
       try {
-        final devices = await deviceRepository.fetchDevices();
+        final devices = await deviceRepository.fetchDevices(event.payload);
 
         yield DeviceLoaded(devices);
       } on NetworkError {
@@ -40,7 +40,8 @@ class DeviceBloc extends Bloc<DeviceEvent, DeviceState> {
           longitude: jsonMap['longitude'],
           timestamp: DateTime.now(),
         );
-        await deviceRepository.postPosition(jsonMap['deviceId'], position);
+        
+        deviceRepository.postPosition(jsonMap['deviceId'], position);
 
         yield DeviceLoaded(state.devices);
       } on NetworkError {
@@ -59,6 +60,9 @@ class DeviceBloc extends Bloc<DeviceEvent, DeviceState> {
       state.devices[jsonMap['id']].position = Position(
           latitude: jsonMap['latitude'], longitude: jsonMap['longitude']);
       yield DeviceLoaded(state.devices);
+    }
+    else if (event is ClearDevices) {
+      yield DeviceInitial([]);
     }
   }
 }

@@ -56,7 +56,7 @@ class MqttBloc extends Bloc<MqttEvent, MqttState> {
 
       } else if (event is MqttDisconnecting) {
         mqttClientWrapper.client.disconnect();
-        await Future.delayed(Duration(seconds: 3));
+        await Future.delayed(Duration(milliseconds: 500));
         yield MqttInitial();
       }
       else if (event is MqttDisconnected) {

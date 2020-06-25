@@ -30,7 +30,12 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<PrivacyBloc, PrivacyState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is PrivacyError) {
+          Scaffold.of(context)
+              .showSnackBar(SnackBar(content: Text(state.error)));
+        }
+      },
       child: BlocBuilder<PrivacyBloc, PrivacyState>(
         builder: (context, state) {
           if (state is PrivacyLoading) {
@@ -56,9 +61,10 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
             child: Text(
               "${widget.deviceId}",
               style: TextStyle(
-                  color: Styles.nearlyBlack,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w500),
+                color: Styles.nearlyBlack,
+                fontSize: 24,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ),
@@ -224,7 +230,8 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                             'deviceId': state.deviceId,
                             '_id': privacy.id,
                           };
-                          BlocProvider.of<PrivacyBloc>(context).add(RemovePrivacy(null, payload));
+                          BlocProvider.of<PrivacyBloc>(context)
+                              .add(RemovePrivacy(null, payload));
                         },
                       ),
                     ],
@@ -388,7 +395,10 @@ class _PrivacyFormState extends State<PrivacyForm> {
               timeEnd: _timeEnd.toUtc(),
               placement: Place.districts.keys.toList()[_placement],
             );
-            final payload = {'deviceId': widget.deviceId, 'privacy': privacy.toJson(),};
+            final payload = {
+              'deviceId': widget.deviceId,
+              'privacy': privacy.toJson(),
+            };
 
             widget.fabHandler();
             BlocProvider.of<PrivacyBloc>(context)

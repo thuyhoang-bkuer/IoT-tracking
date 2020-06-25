@@ -40,3 +40,13 @@ class MqttPublish extends MqttEvent {
   @override
   List<Object> get props => [topic, payload];
 }
+
+class MqttReceived extends MqttEvent {
+  final String topic;
+  final Map<String, dynamic> payload;
+
+  MqttReceived({this.topic, this.payload});
+
+  @override
+  List<Object> get props => [topic, payload];
+}
