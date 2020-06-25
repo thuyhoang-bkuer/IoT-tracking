@@ -153,7 +153,6 @@ class _TitleBarState extends State<TitleBar> {
                             BlocProvider.of<MqttBloc>(context).add(MqttDisconnected());
                           },
                           onDataReceivedCallback: (data) {
-                            print('Things is: $data');
                             BlocProvider.of<MqttBloc>(context).add(MqttPublish(
                                 topic: "Topic/LightD",
                                 payload: {"device_id": "LightD", "values": ["0","100"]}
