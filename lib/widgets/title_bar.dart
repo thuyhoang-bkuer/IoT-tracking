@@ -148,26 +148,39 @@ class _TitleBarState extends State<TitleBar> {
                   if (state is MqttUnitial) {
                     BlocProvider.of<MqttBloc>(context).add(
                       MqttInitialize(
-                        new MqttClientWrapper(onDisconnectedCallback: () {
+                        new MqttClientWrapper(onConnectedCallback: () {
+                          final device = {
+                            "id": "GPS",
+                            "status": 1,
+                            "name": "Unknown",
+                          };
+                          BlocProvider.of<DeviceBloc>(context).add(
+                            FetchDevices(
+                              topic: null,
+                              payload: {
+                                "devices": [device]
+                              },
+                            ),
+                          );
+                        }, onDisconnectedCallback: () {
                           BlocProvider.of<MqttBloc>(context)
                               .add(MqttDisconnected());
                           BlocProvider.of<DeviceBloc>(context)
                               .add(ClearDevices());
                         }, onDataReceivedCallback: (data) {
-                          final devices = BlocProvider.of<DeviceBloc>(context)
-                              .state
-                              .devices;
-                          Map<String, dynamic> payload = json.decode(data);
-
-                          if (payload['action'] == 'response/device/list') {
-                            final devices = payload['data'];
-                            BlocProvider.of<DeviceBloc>(context).add(
-                              FetchDevices(
-                                topic: null,
-                                payload: {"devices": devices},
-                              ),
-                            );
-                          } 
+                          // final devices = BlocProvider.of<DeviceBloc>(context)
+                          //     .state
+                          //     .devices;
+                          // Map<String, dynamic> payload = json.decode(data);
+                          // if (payload['action'] == 'response/device/list') {
+                          //   final devices = payload['data'];
+                          //   BlocProvider.of<DeviceBloc>(context).add(
+                          //     FetchDevices(
+                          //       topic: null,
+                          //       payload: {"devices": devices},
+                          //     ),
+                          //   );
+                          // }
                           // else if (payload['action'] ==
                           //     'response/device/gps') {
                           //   String id = payload['id'];
