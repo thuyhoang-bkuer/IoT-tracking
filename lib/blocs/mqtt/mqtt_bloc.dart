@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -31,7 +32,8 @@ class MqttBloc extends Bloc<MqttEvent, MqttState> {
         if (state is MqttUnitial) {
           throw Error();
         }
-        mqttClientWrapper.publishMessage(event.payload.toString());
+
+        mqttClientWrapper.publishMessage(event.topic.toString(), json.encode(event.payload));
       }
       else if (event is MqttConnect) {
         if (state is MqttUnitial) {

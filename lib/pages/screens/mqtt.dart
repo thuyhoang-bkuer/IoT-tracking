@@ -29,11 +29,11 @@ class _MqttFormState extends State<MqttForm> {
     // _topic = 'Topic/GPS';
     // _username = 'BKvm2';
     // _password = 'Hcmut_CSE_2020';
-    _serverUri = '192.168.1.68';
+    _serverUri = '52.148.117.13';
     _port = '1883';
     _topic = 'Topic/GPS';
-    _username = '';
-    _password = '';
+    _username = 'vuong-cuong';
+    _password = 'Vuongcuong123';
   }
 
   @override

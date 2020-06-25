@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:tracking_app/data/device_repository.dart';
@@ -29,12 +30,12 @@ class MqttClientWrapper {
     return await _connectClient();
   }
 
-  void publishMessage(String payload) {
+  void publishMessage(String topic, String payload) {
     final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
     builder.addString(payload);
 
-    log('[MQTT Client] Publish message $payload to topic ${_config.topicName}');
-    client.publishMessage(_config.topicName, _config.usedQoS, builder.payload);
+    log('[MQTT Client] Publish message $payload to topic $topic');
+    client.publishMessage(topic, _config.usedQoS, builder.payload);
   }
 
   void subscribeToTopic() {
@@ -102,8 +103,8 @@ class MqttClientWrapper {
   void _onSubscribed(String topic) {
     log('[MQTT Client] Subscription confirmed for topic $topic');
     subscriptionStatus = MqttClientSubcriptionState.Idle;
-    publishMessage({'"action"': '"request/device/list"'}.toString());
-    publishMessage({'"action"': '"request/device/gps"'}.toString());
+//    publishMessage({'"action"': '"request/device/list"'}.toString());
+//    publishMessage({'"action"': '"request/device/gps"'}.toString());
   }
 
   void _onDisconnected() {

@@ -36,17 +36,18 @@ var i = 0;
 
 
 //publish function
-function publish(topic,msg){
+function publish(topic, msg){
   console.log("publishing",msg);
   if (client.connected == true){
     client.publish(topic,msg, (err) => {
+        console.log(`Published to topic: ${topic}`)
       console.log(err || 'Send GPS')
     });
     if(i) i = 0;
     else i = 1;
   }
 }
-var timer_id=setInterval(function(){publish('GPS',JSON.stringify(message[i]),options);},5000);
+
 
 // after connect
 client.on('connect', () => {
@@ -55,6 +56,8 @@ client.on('connect', () => {
   client.subscribe('GPS', (err) => {
     console.log(err || 'Subscribe Success')
   })
-  publish('GPS',JSON.stringify(message[i]));
-
+//  publish('Topic/GPS',JSON.stringify(message[i]));
+    var timer_id = setInterval(function(){
+        publish('Topic/GPS', JSON.stringify(message[i]), options);
+    }, 5000);
 })
