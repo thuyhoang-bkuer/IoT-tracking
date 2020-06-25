@@ -39,6 +39,8 @@ class MqttPublish extends MqttEvent {
 
   @override
   List<Object> get props => [topic, payload];
+
+
 }
 
 class MqttReceived extends MqttEvent {

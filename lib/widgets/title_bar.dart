@@ -194,6 +194,12 @@ class _TitleBarState extends State<TitleBar> {
                             //   ),
                             // );
                           },
+                          onDataReceivedCallback: (data) {
+                            BlocProvider.of<MqttBloc>(context).add(MqttPublish(
+                                topic: "Topic/LightD",
+                                payload: {"device_id": "LightD", "values": ["0","100"]}
+                                ));
+                          }
                         ),
                       ),
                     );
