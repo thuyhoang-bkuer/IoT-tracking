@@ -52,5 +52,5 @@ client.on("connect", () => {
     //  publish('Topic/GPS',JSON.stringify(message[i]));
     var timer_id = setInterval(function () {
         publish("Topic/GPS", JSON.stringify(message[i]), options);
-    }, 10000);
+    }, 5000);
 });
