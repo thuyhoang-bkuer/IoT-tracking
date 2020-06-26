@@ -24,7 +24,8 @@ class MqttClientWrapper {
     this.onDataReceivedCallback,
   });
 
-  Future<MqttClientConnectionStatus> prepareMqttClient(MqttConfig config) async {
+  Future<MqttClientConnectionStatus> prepareMqttClient(
+      MqttConfig config) async {
     _updateConfig(config);
     _setupMqttClient();
     return await _connectClient();
@@ -46,6 +47,7 @@ class MqttClientWrapper {
       final MqttPublishMessage receivedMsg = c[0].payload;
       final String data =
           MqttPublishPayload.bytesToStringAsString(receivedMsg.payload.message);
+
       log('[MQTT Client] Got a message $data');
 
       onDataReceivedCallback?.call(data);
@@ -59,7 +61,8 @@ class MqttClientWrapper {
   void _setupMqttClient() {
     final MqttConnectMessage connectMessage = MqttConnectMessage()
         .withClientIdentifier('Mqtt_MyClientUniqueId')
-        .keepAliveFor(1000) // Must agree with the keep alive set above or not set
+        .keepAliveFor(
+            1000) // Must agree with the keep alive set above or not set
         .startClean() // Non persistent session for testing
         .authenticateAs(
           _config.username,
@@ -87,7 +90,6 @@ class MqttClientWrapper {
       client.disconnect();
       throw NetworkError();
     }
-    
 
     if (client.connectionStatus.state == MqttConnectionState.connected) {
       connectionState = MqttClientConnectionState.Connected;

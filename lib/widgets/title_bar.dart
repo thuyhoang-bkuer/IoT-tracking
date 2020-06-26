@@ -148,6 +148,7 @@ class _TitleBarState extends State<TitleBar> {
                   if (state is MqttUnitial) {
                     BlocProvider.of<MqttBloc>(context).add(
                       MqttInitialize(
+<<<<<<< HEAD
                         new MqttClientWrapper(onConnectedCallback: () {
                           final device = {
                             "id": "GPS",
