@@ -164,6 +164,7 @@ class _TitleBarState extends State<TitleBar> {
                           BlocProvider.of<MqttBloc>(context)
                               .add(MqttDisconnected());
                         }, onDataReceivedCallback: (data) async {
+<<<<<<< HEAD
                           Map valueMap = json.decode(data);
                           final jsonData = await rootBundle
                               .loadString('assets/storage/district10.json');
@@ -176,6 +177,7 @@ class _TitleBarState extends State<TitleBar> {
                           List<double> point = [latitude, longitude];
                           bool isInside =
                               Utils.isInside(polygon, polygon.length, point);
+
                           if (isInside) {
                             BlocProvider.of<MqttBloc>(context).add(
                                 MqttPublish(topic: "Topic/LightD", payload: {
@@ -186,7 +188,7 @@ class _TitleBarState extends State<TitleBar> {
                             BlocProvider.of<MqttBloc>(context).add(
                                 MqttPublish(topic: "Topic/LightD", payload: {
                               "device_id": "LightD",
-                              "values": ["1", "100"]
+                              "values": ["1", "255"]
                             }));
                           }
                         }),
