@@ -14,6 +14,7 @@ import 'package:tracking_app/pages/screens/mqtt.dart';
 import 'package:tracking_app/styles/index.dart';
 import 'package:tracking_app/data/device_repository.dart';
 
+import '../models/device.dart';
 import '../data/device_repository.dart';
 import '../data/device_repository.dart';
 import '../models/privacy.dart';
@@ -160,12 +161,63 @@ class _TitleBarState extends State<TitleBar> {
                   if (state is MqttUnitial) {
                     BlocProvider.of<MqttBloc>(context).add(
                       MqttInitialize(
-                        new MqttClientWrapper(onDisconnectedCallback: () {
+                        new MqttClientWrapper(
+                            // onConnectedCallback: () {
+                            //   final device = {
+                            //     "id": "GPS",
+                            //     "status": 1,
+                            //     "name": "Unknown",
+                            //   };
+                            //   BlocProvider.of<DeviceBloc>(context).add(
+                            //     FetchDevices(
+                            //       topic: null,
+                            //       payload: {
+                            //         "devices": [device]
+                            //       },
+                            //     ),
+                            //   );
+                            // },
+                            onDisconnectedCallback: () {
                           BlocProvider.of<MqttBloc>(context)
                               .add(MqttDisconnected());
                         }, onDataReceivedCallback: (data) async {
                           Map valueMap = json.decode(data);
 
+                          // // Render devices to UI
+                          List<Device> devices =
+                              BlocProvider.of<DeviceBloc>(context)
+                                  .state
+                                  .devices;
+
+                          bool isInDeviceList = false;
+
+                          List<Map<String, dynamic>> devicesMap = [];
+
+                          devices.forEach((device) {
+                            devicesMap.add(device.toJson());
+
+                            if (device.id == valueMap['device_id']) {
+                              isInDeviceList = true;
+                            }
+                          });
+
+                          if (!isInDeviceList) {
+                            final newDevice = {
+                              "id": valueMap['device_id'],
+                              "status": 1,
+                              "name": valueMap['device_id']
+                            };
+
+                            devicesMap.add(newDevice);
+
+                            BlocProvider.of<DeviceBloc>(context).add(
+                              FetchDevices(
+                                  topic: null,
+                                  payload: {"devices": devicesMap}),
+                            );
+                          }
+
+                          // Check 'privacy'
                           final jsonData = await rootBundle
                               .loadString('assets/storage/district10.json');
                           final jsonMap = json.decode(jsonData);
