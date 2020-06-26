@@ -15,7 +15,7 @@ router.get('/', async (req,res) => {
 router.get('/:districtName', async (req, res) => {
     console.log(`[Place GET] ${req.params.districtName}`)
     try {
-        const points = await Place.find({'name': req.params.districtName})
+        const points = await Place.find({'name': req.params.districtName});
         res.json(points);   
     } catch (error) {
         res.json({message: error});
@@ -24,9 +24,10 @@ router.get('/:districtName', async (req, res) => {
 
 router.post('/', async(req, res) => {
     console.log(`[Place POST]`)
+    var jsonData = JSON.parse(req.body.listPoints)
     const place = new Place({
         name: req.body.name,
-        listPoints: req.body.listPoints,
+        listPoints: jsonData,
     });
     try {
         const savePlace = await place.save();
@@ -37,5 +38,16 @@ router.post('/', async(req, res) => {
     }
     console.log({place});
 })
+
+router.delete('/id', async (req, res) => {
+    try {
+        const removedPolicy = await Policy.deleteOne({_id: req.params.id}, (err) => {
+            console.log(err);
+        });
+        res.json(removedPolicy);
+    } catch (err) {
+        res.json({message: err});
+    }
+});
 
 module.exports = router;

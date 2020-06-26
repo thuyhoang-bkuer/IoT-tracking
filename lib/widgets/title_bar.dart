@@ -1,13 +1,25 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart';
+import 'package:tracking_app/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracking_app/blocs/_.dart';
 import 'package:tracking_app/models/enums.dart';
 import 'package:tracking_app/mqtt/mqtt_wrapper.dart';
 import 'package:tracking_app/pages/screens/mqtt.dart';
 import 'package:tracking_app/styles/index.dart';
+import 'package:tracking_app/data/device_repository.dart';
+
+import '../data/device_repository.dart';
+import '../data/device_repository.dart';
+import '../models/privacy.dart';
+import '../models/privacy.dart';
+import '../models/privacy.dart';
+import '../utils/utils.dart';
 
 class TitleBar extends StatefulWidget {
   final Color primaryColor;
@@ -148,69 +160,35 @@ class _TitleBarState extends State<TitleBar> {
                   if (state is MqttUnitial) {
                     BlocProvider.of<MqttBloc>(context).add(
                       MqttInitialize(
-<<<<<<< HEAD
-                        new MqttClientWrapper(onConnectedCallback: () {
-                          final device = {
-                            "id": "GPS",
-                            "status": 1,
-                            "name": "Unknown",
-                          };
-                          BlocProvider.of<DeviceBloc>(context).add(
-                            FetchDevices(
-                              topic: null,
-                              payload: {
-                                "devices": [device]
-                              },
-                            ),
-                          );
-                        }, onDisconnectedCallback: () {
+                        new MqttClientWrapper(onDisconnectedCallback: () {
                           BlocProvider.of<MqttBloc>(context)
                               .add(MqttDisconnected());
-                          BlocProvider.of<DeviceBloc>(context)
-                              .add(ClearDevices());
-                        }, onDataReceivedCallback: (data) {
-                          // final devices = BlocProvider.of<DeviceBloc>(context)
-                          //     .state
-                          //     .devices;
-                          // Map<String, dynamic> payload = json.decode(data);
-                          // if (payload['action'] == 'response/device/list') {
-                          //   final devices = payload['data'];
-                          //   BlocProvider.of<DeviceBloc>(context).add(
-                          //     FetchDevices(
-                          //       topic: null,
-                          //       payload: {"devices": devices},
-                          //     ),
-                          //   );
-                          // }
-                          // else if (payload['action'] ==
-                          //     'response/device/gps') {
-                          //   String id = payload['id'];
-                          //   final device =
-                          //       devices.where((d) => d.id == id).toList()[0];
-                          //   final index = devices.indexOf(device);
-                          //   if (device.status == Power.On) {
-                          //     final map = {
-                          //       "index": index,
-                          //       "deviceId": device.id,
-                          //       "latitude": payload['data'][0],
-                          //       "longitude": payload['data'][1],
-                          //     };
-                          //     BlocProvider.of<DeviceBloc>(context).add(
-                          //       SubcribePosition(payload: map),
-                          //     );
-                          //   }
-                          // }
-                          // BlocProvider.of<MqttBloc>(context).add(
-                          //   MqttReceived(
-                          //     topic: null,
-                          //     payload: payload,
-                          //   ),
-                          // );
-                          BlocProvider.of<MqttBloc>(context)
-                              .add(MqttPublish(topic: "Topic/LightD", payload: {
-                            "device_id": "LightD",
-                            "values": ["0", "100"]
-                          }));
+                        }, onDataReceivedCallback: (data) async {
+                          Map valueMap = json.decode(data);
+                          final jsonData = await rootBundle
+                              .loadString('assets/storage/district10.json');
+                          final jsonMap = json.decode(jsonData);
+                          var polygon = jsonMap['points'];
+
+                          double latitude = double.parse(valueMap['values'][0]);
+                          double longitude =
+                              double.parse(valueMap['values'][1]);
+                          List<double> point = [latitude, longitude];
+                          bool isInside =
+                              Utils.isInside(polygon, polygon.length, point);
+                          if (isInside) {
+                            BlocProvider.of<MqttBloc>(context).add(
+                                MqttPublish(topic: "Topic/LightD", payload: {
+                              "device_id": "LightD",
+                              "values": ["0", "0"]
+                            }));
+                          } else {
+                            BlocProvider.of<MqttBloc>(context).add(
+                                MqttPublish(topic: "Topic/LightD", payload: {
+                              "device_id": "LightD",
+                              "values": ["1", "100"]
+                            }));
+                          }
                         }),
                       ),
                     );

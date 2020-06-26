@@ -91,4 +91,67 @@ class Utils {
 
     return (hitTimes & 1) == 1;
   }
+
+  static double maxof(double a, double b){
+    if(a > b){
+      return a;
+    }else{
+      return b;
+    }
+  }
+
+  static double minof(double a, double b){
+    if(a < b){
+      return a;
+    }else{
+      return b;
+    }
+  }
+
+  static bool onSegment(var p, var q, var r){
+    if(q[0] <= maxof(p[0],r[0]) && q[0] >= minof(p[0],q[0]) && q[1] <= maxof(p[1],r[1]) && q[1] >= minof(p[1],q[1]))
+      return true;
+    else
+      return false;
+  }
+
+  static int orientation(var p, var q, var r){
+    var lin = (q[1] - p[1]) * (r[0] - q[0]) - (q[0] - p[0]) * (r[1] - q[1]);  
+      if(lin == 0) return 0;
+      return (lin > 0)? 1:2;
+  }
+
+  static bool doIntersect(var p1, var q1, var p2, var q2){
+    var o1 = orientation(p1,q1,p2);
+    var o2 = orientation(p1,q1,q2);
+    var o3 = orientation(p2,q2,p1);
+    var o4 = orientation(p2,q2,q1);
+
+    if(o1 != o2 && o3 != o4)
+      return true;
+
+    if(o1 == 0 && onSegment(p1,p2,q1)) return true;
+    if(o2 == 0 && onSegment(p1,q2,q1)) return true;
+    if(o3 == 0 && onSegment(p2,p1,q2)) return true;
+    if(o4 == 0 && onSegment(p2,p1,q2)) return true;
+    return false;
+  }
+
+  static bool isInside(var polygon, var n, var p){
+    if (n < 3) return false;
+    var extreme = [12, p[1]];
+    var count  = 0, i = 0;
+    do{
+      var next = (i + 1) % n;
+      if(doIntersect(polygon[i], polygon[next], p, extreme)){
+        if(orientation(polygon[i], p, polygon[next]) == 0)
+          return onSegment(polygon[i], p, polygon[next]);
+        count++;
+      }
+      i = next;
+    }while (i != 0);
+    var res = count & 1;
+    if(res > 0) return true;
+    else return false;
+  }
 }
