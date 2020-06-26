@@ -164,8 +164,8 @@ class _TitleBarState extends State<TitleBar> {
                           BlocProvider.of<MqttBloc>(context)
                               .add(MqttDisconnected());
                         }, onDataReceivedCallback: (data) async {
-<<<<<<< HEAD
                           Map valueMap = json.decode(data);
+
                           final jsonData = await rootBundle
                               .loadString('assets/storage/district10.json');
                           final jsonMap = json.decode(jsonData);
