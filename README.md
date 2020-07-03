@@ -33,15 +33,15 @@ It uses some IoT technologies such as _IoT Gateway_, _MQTT protocol_ & most impo
     ```shell
     $ git clone https://github.com/thuyhoang-bkuer/IoT-tracking.git
     ```
-2.  In `root` directory, install Flutter's packages by running the following command:
+2.  In the `root` directory of cloned repo, _install Flutter's packages_ by running the following command:
     ```shell
-    $ flutter packages get
+    $ flutter pub get
     ```
-3.  Then install Node's packages by running the following command:
+3.  Then _install Node's packages_ for _Server_ by running the following command:
     ```shell
     $ yarn --cwd ./server install
     ```
-4.  Finally, install Node's packages for Broker:
+4.  Finally, _install Node's packages_ for _Broker_:
     ```shell
     $ yarn --cwd ./broker install
     ```
@@ -50,19 +50,19 @@ It uses some IoT technologies such as _IoT Gateway_, _MQTT protocol_ & most impo
 
 > <u>_Note:_</u> All command must run in the `root` directory.
 
-1.  Make sure your MongoDB's service is running on your computer. Then run the server:
+1.  _Run Server_:
     ```shell
     $ yarn --cwd ./server start
     ```
-2.  Start MQTT's Broker:
+2.  _Start MQTT's Broker_:
     ```shell
     $ yarn --cwd ./broker start
     ```
-3.  _(Optional)_ If you want to test our simulated data, you can run this command:
+3.  _(Optional)_ If you want to test with our simulated data, you can run this command:
     ```shell
     $ node ./broker/clients.js
     ```
-4.  Make sure you have a **Mobile Emulator** running. And finally, build & run Flutter's app:
+4.  Make sure you have a **Mobile Emulator** running. Then finally, _build & run Flutter's_ app:
     ```shell
     $ flutter run
     ```

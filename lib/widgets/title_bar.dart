@@ -1,26 +1,15 @@
 import 'dart:convert';
 import 'dart:math';
-
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart';
-import 'package:tracking_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import 'package:tracking_app/models/_.dart';
+import 'package:tracking_app/utils/utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracking_app/blocs/_.dart';
-import 'package:tracking_app/models/enums.dart';
 import 'package:tracking_app/mqtt/mqtt_wrapper.dart';
-import 'package:tracking_app/pages/screens/mqtt.dart';
+import 'package:tracking_app/pages/screens/_.dart';
 import 'package:tracking_app/styles/index.dart';
-import 'package:tracking_app/data/device_repository.dart';
-
-import '../models/device.dart';
-import '../data/device_repository.dart';
-import '../data/device_repository.dart';
-import '../models/privacy.dart';
-import '../models/privacy.dart';
-import '../models/privacy.dart';
-import '../utils/utils.dart';
 
 class TitleBar extends StatefulWidget {
   final Color primaryColor;
@@ -161,23 +150,7 @@ class _TitleBarState extends State<TitleBar> {
                   if (state is MqttUnitial) {
                     BlocProvider.of<MqttBloc>(context).add(
                       MqttInitialize(
-                        new MqttClientWrapper(
-                            // onConnectedCallback: () {
-                            //   final device = {
-                            //     "id": "GPS",
-                            //     "status": 1,
-                            //     "name": "Unknown",
-                            //   };
-                            //   BlocProvider.of<DeviceBloc>(context).add(
-                            //     FetchDevices(
-                            //       topic: null,
-                            //       payload: {
-                            //         "devices": [device]
-                            //       },
-                            //     ),
-                            //   );
-                            // },
-                            onDisconnectedCallback: () {
+                        new MqttClientWrapper(onDisconnectedCallback: () {
                           BlocProvider.of<MqttBloc>(context)
                               .add(MqttDisconnected());
                         }, onDataReceivedCallback: (data) async {

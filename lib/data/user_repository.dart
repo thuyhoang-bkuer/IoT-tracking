@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:password/password.dart';
+import 'package:tracking_app/data/device_repository.dart';
 
 // Please refer to `device_repository.dart`
 // We need an abstract class then implementing it
@@ -12,7 +13,7 @@ import 'package:password/password.dart';
 class NetworkErr extends Error {}
 
 class UserRepository {
-  final String baseUrl = "http://192.168.1.68:3000/";
+  final String baseUrl = "http://10.0.2.2:3000/";
   Future<bool> authenticate({
     @required String email,
     @required String password,
@@ -23,9 +24,10 @@ class UserRepository {
 
     final url = baseUrl + 'user/$email';
     final headers = {"Content-type": "application/json"};
-    final response = await get(url, headers: headers);
 
     try {
+      final response = await get(url, headers: headers).timeout(Duration(seconds: 5));
+      
       if (response.statusCode == 200) {
         final jLog = json.decode(response.body);
         // print(Password.hash(password, new PBKDF2()));
@@ -40,7 +42,10 @@ class UserRepository {
           return false;
       } else
         throw NetworkErr();
-    } on Error {
+    } on TimeoutException {
+      throw NetworkError();
+    } 
+    on Error {
       throw Error;
     }
   }
