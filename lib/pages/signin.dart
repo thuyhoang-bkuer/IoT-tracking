@@ -113,6 +113,7 @@ class _LoginFormState extends State<LoginForm> {
               ),
             ),
             child: SingleChildScrollView(
+              physics: NeverScrollableScrollPhysics(),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -120,7 +121,7 @@ class _LoginFormState extends State<LoginForm> {
                   Container(
                     margin: EdgeInsets.only(top: 30),
                     width: double.infinity,
-                    height: 200,
+                    height: 100,
                     alignment: Alignment.center,
                   ),
                   Container(
