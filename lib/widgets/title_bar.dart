@@ -152,7 +152,13 @@ class _TitleBarState extends State<TitleBar> {
                           final device = {
                             "id": "GPS",
                             "status": 1,
-                            "name": "Unknown",
+                            "name": "Fly",
+                            "position": {
+                              "id": "1001",
+                              "latitude": 10.773137,
+                              "longitude": 106.659903,
+                              "timestamp": DateTime.now().microsecondsSinceEpoch
+                            }
                           };
                           BlocProvider.of<DeviceBloc>(context).add(
                             FetchDevices(

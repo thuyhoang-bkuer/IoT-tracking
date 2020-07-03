@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
+import 'package:tracking_app/data/_.dart';
 import 'package:tracking_app/models/_.dart';
 
 abstract class DeviceRepository {
@@ -83,7 +85,7 @@ class LocalDeviceRepository extends DeviceRepository {
     });
   }
 
-  @override 
+  @override
   Future<void> postPosition(String deviceId, Position position) {
     throw UnimplementedError();
   }
@@ -118,13 +120,16 @@ class SemiRemoteDeviceRepository extends DeviceRepository {
   Future<History> fetchHistory(String deviceId) async {
     final url = baseUrl + 'location/$deviceId';
     final headers = {"Content-type": "application/json"};
-    final response = await get(url, headers: headers);
 
     try {
+      final response =
+          await get(url, headers: headers).timeout(Duration(seconds: 5));
       if (response.statusCode == 200) {
         return History.fromJson(json.decode(response.body));
       } else
         throw NetworkError();
+    } on TimeoutException {
+      throw NetworkError();
     } on Error {
       throw Error;
     }
@@ -145,14 +150,16 @@ class SemiRemoteDeviceRepository extends DeviceRepository {
   Future<List<Privacy>> fetchPrivacy(String deviceId) async {
     final url = baseUrl + 'privatepolicy/$deviceId';
     final headers = {"Content-type": "application/json"};
-    
-    final response = await get(url, headers: headers);
-    
+
     try {
-      if (response.statusCode == 200)  {
+      final response =
+          await get(url, headers: headers).timeout(Duration(seconds: 5));
+      if (response.statusCode == 200) {
         final jsonMap = json.decode(response.body);
         return Privacy.fromMaps(jsonMap['policies']);
       }
+    } on TimeoutException {
+      throw NetworkError();
     } on Error {
       throw NetworkError();
     }
@@ -193,13 +200,15 @@ class RemoteDeviceRepository extends DeviceRepository {
   Future<History> fetchHistory(String deviceId) async {
     final url = baseUrl + 'location/$deviceId';
     final headers = {"Content-type": "application/json"};
-    final response = await get(url, headers: headers);
 
     try {
+      final response = await get(url, headers: headers).timeout(Duration(seconds: 5));
       if (response.statusCode == 200) {
         return History.fromJson(json.decode(response.body));
       } else
         throw NetworkError();
+    } on TimeoutException {
+      throw NetworkError();
     } on Error {
       throw Error;
     }
@@ -220,14 +229,16 @@ class RemoteDeviceRepository extends DeviceRepository {
   Future<List<Privacy>> fetchPrivacy(String deviceId) async {
     final url = baseUrl + 'privatepolicy/$deviceId';
     final headers = {"Content-type": "application/json"};
-    
-    final response = await get(url, headers: headers);
-    
+
     try {
-      if (response.statusCode == 200)  {
+      final response =
+          await get(url, headers: headers).timeout(Duration(seconds: 5));
+      if (response.statusCode == 200) {
         final jsonMap = json.decode(response.body);
         return Privacy.fromMaps(jsonMap['policies']);
       }
+    } on TimeoutException {
+      throw NetworkError();
     } on Error {
       throw NetworkError();
     }
@@ -254,4 +265,3 @@ class RemoteDeviceRepository extends DeviceRepository {
     );
   }
 }
-
