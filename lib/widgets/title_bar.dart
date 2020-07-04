@@ -190,6 +190,16 @@ class _TitleBarState extends State<TitleBar> {
                             );
                           }
 
+                          // Subcribe position in DB
+                          final historyPayload = {
+                            "index": 0,
+                            "deviceId": valueMap['device_id'],
+                            "latitude": double.parse(valueMap['values'][0]),
+                            "longitude": double.parse(valueMap['values'][1])
+                          };
+                          BlocProvider.of<DeviceBloc>(context).add(SubcribePosition(payload: historyPayload));
+                          BlocProvider.of<DeviceBloc>(context).add(LocateDevice(payload: historyPayload));
+
                           // Check 'privacy'
                           final jsonData = await rootBundle
                               .loadString('assets/storage/district10.json');

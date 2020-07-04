@@ -33,6 +33,11 @@ class DeviceBloc extends Bloc<DeviceEvent, DeviceState> {
             error: "There was an error occurs. Please try again!");
       }
     } else if (event is SubcribePosition) {
+      // payload: {
+      //    index:
+      //    lat:
+      //    long: 
+      // }
       try {
         final Map<String, dynamic> jsonMap = event.payload;
         final position = state.devices[jsonMap['index']].position = Position(
@@ -57,7 +62,7 @@ class DeviceBloc extends Bloc<DeviceEvent, DeviceState> {
       yield DeviceLoaded(state.devices);
     } else if (event is LocateDevice) {
       final Map<String, dynamic> jsonMap = event.payload;
-      state.devices[jsonMap['id']].position = Position(
+      state.devices[jsonMap['index']].position = Position(
           latitude: jsonMap['latitude'], longitude: jsonMap['longitude']);
       yield DeviceLoaded(state.devices);
     }
