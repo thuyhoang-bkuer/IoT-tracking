@@ -137,7 +137,8 @@ class Utils {
     return false;
   }
 
-  static bool isInside(var polygon, var n, var p){
+  static bool isInside(List<dynamic> polygon, List<double> p){
+    var n = polygon.length;
     if (n < 3) return false;
     var extreme = [12, p[1]];
     var count  = 0, i = 0;

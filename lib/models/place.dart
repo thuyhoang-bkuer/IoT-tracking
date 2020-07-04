@@ -6,28 +6,28 @@ import 'package:flutter/services.dart';
 
 class Place {
   static Map<String, dynamic> districts = {
-    'District1': 'Quận 1, TP.HCM',
-    'District2': 'Quận 2, TP.HCM',
-    'District3': 'Quận 3, TP.HCM',
-    'District4': 'Quận 4, TP.HCM',
-    'District5': 'Quận 5, TP.HCM',
-    'District6': 'Quận 6, TP.HCM',
-    'District7': 'Quận 7, TP.HCM',
-    'District8': 'Quận 8, TP.HCM',
-    'District9': 'Quận 9, TP.HCM',
-    'District10': 'Quận 10, TP.HCM',
-    'District11': 'Quận 11, TP.HCM',
-    'District12': 'Quận 12, TP.HCM',
-    'ThuDuc': 'Thủ Đức, TP.HCM',
-    'BinhThanh': 'Bình Thạnh, TP.HCM',
-    'TanBinh': 'Tân Bình, TP.HCM',
-    'GoVap': 'Gò Vấp, TP.HCM',
-    'PhuNhuan': 'Phú Nhuận, TP.HCM',
-    'TanPhu': 'Tân Phú, TP.HCM',
-    'BinhTan': 'Bình Tân, TP.HCM',
+    'district1': 'Quận 1, TP.HCM',
+    'district2': 'Quận 2, TP.HCM',
+    'district3': 'Quận 3, TP.HCM',
+    'district4': 'Quận 4, TP.HCM',
+    'district5': 'Quận 5, TP.HCM',
+    'district6': 'Quận 6, TP.HCM',
+    'district7': 'Quận 7, TP.HCM',
+    'district8': 'Quận 8, TP.HCM',
+    'district9': 'Quận 9, TP.HCM',
+    'district10': 'Quận 10, TP.HCM',
+    'district11': 'Quận 11, TP.HCM',
+    'district12': 'Quận 12, TP.HCM',
+    'thuduc': 'Thủ Đức, TP.HCM',
+    'binhthanh': 'Bình Thạnh, TP.HCM',
+    'tanbinh': 'Tân Bình, TP.HCM',
+    'govap': 'Gò Vấp, TP.HCM',
+    'phunhuan': 'Phú Nhuận, TP.HCM',
+    'tanphu': 'Tân Phú, TP.HCM',
+    'binhtan': 'Bình Tân, TP.HCM',
   };
 
-  static Future<List<List<double>>> getPoints(String district) async {
+  static Future<List<dynamic>> getPoints(String district) async {
     if (districts.containsKey(district)) {
       final jsonData = await rootBundle.loadString('assets/storage/${district.toLowerCase()}.json');
       final jsonMap = json.decode(jsonData);

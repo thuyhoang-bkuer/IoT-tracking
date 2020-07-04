@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -151,67 +152,57 @@ class _TitleBarState extends State<TitleBar> {
                     BlocProvider.of<MqttBloc>(context).add(
                       MqttInitialize(
                         new MqttClientWrapper(onDisconnectedCallback: () {
-                          BlocProvider.of<MqttBloc>(context)
-                              .add(MqttDisconnected());
+                          BlocProvider.of<MqttBloc>(context).add(MqttDisconnected());
+                          BlocProvider.of<DeviceBloc>(context).add(ClearDevices());
                         }, onDataReceivedCallback: (data) async {
                           Map valueMap = json.decode(data);
-
+                          List<double> gps = [
+                            double.parse(valueMap['values'][0]),
+                            double.parse(valueMap['values'][1]),
+                          ];
                           // // Render devices to UI
                           List<Device> devices =
                               BlocProvider.of<DeviceBloc>(context)
                                   .state
                                   .devices;
 
-                          bool isInDeviceList = false;
-
-                          List<Map<String, dynamic>> devicesMap = [];
-
-                          devices.forEach((device) {
-                            devicesMap.add(device.toJson());
-
-                            if (device.id == valueMap['device_id']) {
-                              isInDeviceList = true;
-                            }
-                          });
-
-                          if (!isInDeviceList) {
+                          Device currentDevice;
+                          try {
+                            currentDevice = devices.singleWhere(
+                                (device) => device.id == valueMap['device_id']);
+                          } catch (StateError) {
                             final newDevice = {
                               "id": valueMap['device_id'],
                               "status": 1,
                               "name": valueMap['device_id']
                             };
 
-                            devicesMap.add(newDevice);
-
                             BlocProvider.of<DeviceBloc>(context).add(
-                              FetchDevices(
-                                  topic: null,
-                                  payload: {"devices": devicesMap}),
+                              FetchDevices(topic: null, payload: {
+                                "devices": [newDevice]
+                              }),
+                            );
+
+                            currentDevice = Device(
+                              id: valueMap['device_id'],
+                              status: Power.On,
+                              name: valueMap['device_id'],
                             );
                           }
-
                           // Subcribe position in DB
                           final historyPayload = {
                             "index": 0,
                             "deviceId": valueMap['device_id'],
-                            "latitude": double.parse(valueMap['values'][0]),
-                            "longitude": double.parse(valueMap['values'][1])
+                            "latitude": gps[0],
+                            "longitude": gps[1]
                           };
-                          BlocProvider.of<DeviceBloc>(context).add(SubcribePosition(payload: historyPayload));
-                          BlocProvider.of<DeviceBloc>(context).add(LocateDevice(payload: historyPayload));
+                          BlocProvider.of<DeviceBloc>(context)
+                              .add(SubcribePosition(payload: historyPayload));
+                          BlocProvider.of<DeviceBloc>(context)
+                              .add(LocateDevice(payload: historyPayload));
 
-                          // Check 'privacy'
-                          final jsonData = await rootBundle
-                              .loadString('assets/storage/district10.json');
-                          final jsonMap = json.decode(jsonData);
-                          var polygon = jsonMap['points'];
 
-                          double latitude = double.parse(valueMap['values'][0]);
-                          double longitude =
-                              double.parse(valueMap['values'][1]);
-                          List<double> point = [latitude, longitude];
-                          bool isInside =
-                              Utils.isInside(polygon, polygon.length, point);
+                          final isInside = await currentDevice.validatePolicy(gps);
 
                           if (isInside) {
                             BlocProvider.of<MqttBloc>(context).add(

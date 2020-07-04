@@ -1,5 +1,13 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
+import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart';
+import 'package:tracking_app/utils/utils.dart';
+
+import '_.dart';
 
 class Privacy extends Equatable {
   final String id;
@@ -7,7 +15,7 @@ class Privacy extends Equatable {
   final DateTime timeEnd;
   final DateTime timeStart;
   final String placement;
-  final List<LatLng> place;
+  List<dynamic> place;
 
   Privacy(this.id, {
     this.deviceId,
@@ -54,4 +62,13 @@ class Privacy extends Equatable {
 
   @override
   List<Object> get props => [deviceId, timeEnd, timeStart, placement, place];
+
+  Future<bool> isIllegal(List<double> point) async {
+    final now = DateTime.now();
+    if (place == null) {
+      final polygon = await Place.getPoints(placement);
+      place = polygon;
+    }
+    return now.isAfter(timeStart) && now.isBefore(timeEnd) && Utils.isInside(place, point);
+  }
 }
