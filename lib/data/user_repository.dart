@@ -66,7 +66,7 @@ class UserRepository {
         if ((jLog[0]["email"] == email)) {
           return [jLog[0]["email"], jLog[0]["email"]];
         } else
-          return ["cac", "cac"];
+          return ["", ""];
       } else
         throw NetworkErr();
     } on Error {

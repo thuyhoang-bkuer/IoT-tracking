@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const coordinatesRoute = require('./routes/coordinate');
 app.use('/coordinate', coordinatesRoute);

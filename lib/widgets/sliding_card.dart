@@ -47,7 +47,7 @@ class _SlidingCardState extends State<SlidingCard> {
     // }
 
     switchHandle(bool value) {
-      final payload = {"id": widget.index, "status": value};
+      final payload = {"index": widget.index, "status": value};
 
       BlocProvider.of<DeviceBloc>(context).add(PutDevice(payload: payload));
     }
@@ -145,17 +145,11 @@ class _SlidingCardState extends State<SlidingCard> {
           padding: EdgeInsets.all(0),
           splashColor: Colors.transparent,
           onPressed: () {
-            BlocProvider.of<PrivacyBloc>(context).add(
-              FetchPrivacy(
-                null,
-                {'deviceId': state.devices[widget.index].id},
-              ),
-            );
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => PrivacyScreen(
-                  deviceId: '${state.devices[widget.index].name}',
+                  deviceId: '${state.devices[widget.index].id}',
                 ),
               ),
             );

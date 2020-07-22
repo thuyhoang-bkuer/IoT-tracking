@@ -41,6 +41,12 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
           if (state is PrivacyLoading) {
             return loadingView(context, state);
           } else if (state is PrivacyLoaded) {
+            // Update device policies whenever privacy updated.
+            final privacyPayload = {
+              'deviceId':  widget.deviceId,
+              'policies': state.policies
+            };
+            BlocProvider.of<DeviceBloc>(context).add(PutDevice(payload: privacyPayload));
             return loadedView(context, state);
           }
           return initialView(context, state);
@@ -94,7 +100,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                   ? null
                   : () {
                       BlocProvider.of<PrivacyBloc>(context).add(
-                        FetchPrivacy(null, {"deviceId": state.deviceId}),
+                        FetchPrivacy(null, {"deviceId": widget.deviceId}),
                       );
                     },
               child: Icon(
@@ -401,8 +407,7 @@ class _PrivacyFormState extends State<PrivacyForm> {
             };
 
             widget.fabHandler();
-            BlocProvider.of<PrivacyBloc>(context)
-                .add(PostPrivacy(null, payload));
+            BlocProvider.of<PrivacyBloc>(context).add(PostPrivacy(null, payload));
           },
           child: Icon(
             Icons.check,

@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:tracking_app/blocs/_.dart';
+import 'package:tracking_app/models/_.dart';
 import 'package:tracking_app/mqtt/mqtt_wrapper.dart';
 import 'package:tracking_app/styles/index.dart';
 import 'package:tracking_app/widgets/common/fade_in.dart';
@@ -315,4 +318,75 @@ class _MqttFormState extends State<MqttForm> {
       },
     );
   }
+}
+
+void initializeMqttForm(BuildContext context) {
+  BlocProvider.of<MqttBloc>(context).add(
+    MqttInitialize(
+      new MqttClientWrapper(onDisconnectedCallback: () {
+        BlocProvider.of<MqttBloc>(context).add(MqttDisconnected());
+        BlocProvider.of<DeviceBloc>(context).add(ClearDevices());
+      }, onDataReceivedCallback: (data) async {
+        Map valueMap = json.decode(data);
+        List<double> gps = [
+          double.parse(valueMap['values'][0]),
+          double.parse(valueMap['values'][1]),
+        ];
+        // // Render devices to UI
+        List<Device> devices =
+            BlocProvider.of<DeviceBloc>(context).state.devices;
+
+        Device currentDevice;
+        try {
+          currentDevice = devices
+              .singleWhere((device) => device.id == valueMap['device_id']);
+        } catch (StateError) {
+          final newDevice = {
+            "id": valueMap['device_id'],
+            "status": 1,
+            "name": valueMap['device_id']
+          };
+
+          BlocProvider.of<DeviceBloc>(context).add(
+            FetchDevices(topic: null, payload: {
+              "devices": [newDevice]
+            }),
+          );
+
+          currentDevice = Device(
+            id: valueMap['device_id'],
+            status: Power.On,
+            name: valueMap['device_id'],
+          );
+        }
+        // Subcribe position in DB
+        final historyPayload = {
+          "index": 0,
+          "deviceId": valueMap['device_id'],
+          "latitude": gps[0],
+          "longitude": gps[1]
+        };
+        BlocProvider.of<DeviceBloc>(context)
+            .add(SubcribePosition(payload: historyPayload));
+        BlocProvider.of<DeviceBloc>(context)
+            .add(LocateDevice(payload: historyPayload));
+
+        final isInside = await currentDevice.validatePolicy(gps);
+
+        if (isInside) {
+          BlocProvider.of<MqttBloc>(context)
+              .add(MqttPublish(topic: "Topic/LightD", payload: {
+            "device_id": "LightD",
+            "values": ["0", "0"]
+          }));
+        } else {
+          BlocProvider.of<MqttBloc>(context)
+              .add(MqttPublish(topic: "Topic/LightD", payload: {
+            "device_id": "LightD",
+            "values": ["1", "255"]
+          }));
+        }
+      }),
+    ),
+  );
 }

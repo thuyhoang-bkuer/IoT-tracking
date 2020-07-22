@@ -33,6 +33,11 @@ class DeviceBloc extends Bloc<DeviceEvent, DeviceState> {
             error: "There was an error occurs. Please try again!");
       }
     } else if (event is SubcribePosition) {
+      // payload: {
+      //    index:
+      //    lat:
+      //    long:
+      // }
       try {
         final Map<String, dynamic> jsonMap = event.payload;
         final position = state.devices[jsonMap['index']].position = Position(
@@ -40,7 +45,7 @@ class DeviceBloc extends Bloc<DeviceEvent, DeviceState> {
           longitude: jsonMap['longitude'],
           timestamp: DateTime.now(),
         );
-        
+
         deviceRepository.postPosition(jsonMap['deviceId'], position);
 
         yield DeviceLoaded(state.devices);
@@ -50,18 +55,35 @@ class DeviceBloc extends Bloc<DeviceEvent, DeviceState> {
       }
     } else if (event is PutDevice) {
       final Map<String, dynamic> jsonMap = event.payload;
-      final int id = jsonMap['id'];
-      final Power status = jsonMap['status'] ? Power.On : Power.Off;
-      state.devices[id].status = status;
 
-      yield DeviceLoaded(state.devices);
+      if (!jsonMap.containsKey('index') && !jsonMap.containsKey('deviceId')) {
+        yield DeviceLoaded(state.devices);
+      }
+
+      final devices = state.devices;
+      final updated = jsonMap.containsKey('index')
+          ? devices[jsonMap['index']]
+          : devices.firstWhere((device) => device.id == jsonMap['deviceId'], orElse: () => null);
+      final status = jsonMap.containsKey('status')
+          ? (jsonMap['status'] ? Power.On : Power.Off)
+          : updated?.status;
+      final policies = jsonMap.containsKey('policies')
+          ? jsonMap['policies']
+          : updated?.policies;
+
+      updated.status = status;
+      updated.policies = policies;
+
+      yield DeviceLoaded(devices);
     } else if (event is LocateDevice) {
       final Map<String, dynamic> jsonMap = event.payload;
-      state.devices[jsonMap['id']].position = Position(
-          latitude: jsonMap['latitude'], longitude: jsonMap['longitude']);
+
+      state.devices[jsonMap['index']].position = Position(
+        latitude: jsonMap['latitude'],
+        longitude: jsonMap['longitude'],
+      );
       yield DeviceLoaded(state.devices);
-    }
-    else if (event is ClearDevices) {
+    } else if (event is ClearDevices) {
       yield DeviceInitial([]);
     }
   }
