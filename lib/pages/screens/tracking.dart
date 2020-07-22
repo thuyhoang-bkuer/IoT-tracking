@@ -34,7 +34,7 @@ class _TrackingScreenState extends State<TrackingScreen>
     super.initState();
     _controller = AnimationController(vsync: this);
     _modal = ModalKind.None;
-    _period = RangeValues(-1440.0, 0.0);
+    _period = RangeValues(-24.0, 0.0);
   }
 
   @override
@@ -184,17 +184,6 @@ class _TrackingScreenState extends State<TrackingScreen>
             },
           );
           polylines = Set();
-          // _googleController?.animateCamera(
-          //   CameraUpdate.newCameraPosition(
-          //     CameraPosition(
-          //       target: LatLng(
-          //         widget.constant['latitude'],
-          //         widget.constant['longitude'],
-          //       ),
-          //       zoom: widget.constant['zoom'],
-          //     ),
-          //   ),
-          // );
         } else if (state is HistoryLoading) {
           markers = Utils.retriveAllPoints(
             context,
@@ -426,9 +415,9 @@ class _TrackingScreenState extends State<TrackingScreen>
                     BlocProvider.of<HistoryBloc>(context).add(
                       SliceHistory(
                         latest.timestamp
-                            .add(Duration(minutes: _period.start.toInt())),
+                            .add(Duration(hours: _period.start.toInt())),
                         latest.timestamp
-                            .add(Duration(minutes: _period.end.toInt())),
+                            .add(Duration(hours: _period.end.toInt())),
                       ),
                     );
                   },
@@ -442,11 +431,11 @@ class _TrackingScreenState extends State<TrackingScreen>
                         '${Utils.retriveDate(latest.timestamp, _period.start)}',
                         '${Utils.retriveDate(latest.timestamp, _period.end)}',
                       ),
-                      divisions: 144,
+                      divisions: 24,
                       onChanged: (value) {
                         setState(() => _period = value);
                       },
-                      min: -1440.0,
+                      min: -24,
                       max: 0,
                       values: _period,
                     );

@@ -329,39 +329,50 @@ void initializeMqttForm(BuildContext context) {
       }, onDataReceivedCallback: (data) async {
         Map valueMap = json.decode(data);
         List<double> gps = [
-          double.parse(valueMap['values'][0]),
-          double.parse(valueMap['values'][1]),
+          // double.parse(valueMap['values'][0]),
+          // double.parse(valueMap['values'][1]),
+          valueMap['values'][0],
+          valueMap['values'][1],
         ];
         // // Render devices to UI
         List<Device> devices =
             BlocProvider.of<DeviceBloc>(context).state.devices;
 
         Device currentDevice;
-        try {
-          currentDevice = devices
-              .singleWhere((device) => device.id == valueMap['device_id']);
-        } catch (StateError) {
-          final newDevice = {
-            "id": valueMap['device_id'],
-            "status": 1,
-            "name": valueMap['device_id']
-          };
+        int index = -1;
 
-          BlocProvider.of<DeviceBloc>(context).add(
-            FetchDevices(topic: null, payload: {
-              "devices": [newDevice]
-            }),
-          );
+        currentDevice = devices.firstWhere(
+          (device) {
+            index = index + 1;
+            return device.id == valueMap['device_id'];
+          },
+          orElse: () {
+            final newDevice = {
+              "id": valueMap['device_id'],
+              "status": 1,
+              "name": valueMap['name'] ?? valueMap['device_id']
+            };
 
-          currentDevice = Device(
-            id: valueMap['device_id'],
-            status: Power.On,
-            name: valueMap['device_id'],
-          );
-        }
+            BlocProvider.of<DeviceBloc>(context).add(
+              FetchDevices(topic: null, payload: {
+                "devices": devices.map((d) => d.toJson()).toList()
+                  ..add(newDevice)
+              }),
+            );
+
+            index = devices.length;
+
+            return Device(
+              id: valueMap['device_id'],
+              status: Power.On,
+              name: valueMap['device_id'],
+            );
+          },
+        );
+
         // Subcribe position in DB
         final historyPayload = {
-          "index": 0,
+          "index": index,
           "deviceId": valueMap['device_id'],
           "latitude": gps[0],
           "longitude": gps[1]

@@ -5,7 +5,6 @@ import 'package:tracking_app/blocs/_.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tracking_app/blocs/_.dart';
 import 'package:tracking_app/data/_.dart';
 import 'package:tracking_app/pages/_.dart';
 

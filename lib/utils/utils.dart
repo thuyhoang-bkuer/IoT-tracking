@@ -61,7 +61,7 @@ class Utils {
     return DateFormat('MMM dd, ' 'yy\n   hh:mm aaa').format(
       timestamp.add(
         // Hanoi 7+
-        Duration(hours: 7,minutes: history.toInt()),
+        Duration(hours: 7 + history.toInt()),
       ),
     );
   }
