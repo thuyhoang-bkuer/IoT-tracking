@@ -42,7 +42,7 @@ class _TitleBarState extends State<TitleBar> {
             child: Container(
               padding: const EdgeInsets.only(left: 10),
               child: Text(
-                "Tracking Lover",
+                "iTracking",
                 style: TextStyle(
                   color: widget.primaryColor,
                   fontSize: 24,
@@ -205,7 +205,7 @@ class _TitleBarState extends State<TitleBar> {
             padding: const EdgeInsets.only(left: 10),
             width: 230,
             child: Text(
-              "Tracking Lover",
+              "iTracking",
               style: TextStyle(
                   color: widget.primaryColor,
                   fontSize: 24,

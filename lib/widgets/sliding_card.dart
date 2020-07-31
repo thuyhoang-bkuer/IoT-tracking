@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracking_app/blocs/_.dart';
 import 'package:tracking_app/models/_.dart';
 import 'package:tracking_app/pages/screens/privacy.dart';
@@ -153,6 +154,7 @@ class _SlidingCardState extends State<SlidingCard> {
                 ),
               ),
             );
+            BlocProvider.of<PrivacyBloc>(context).add(FetchPrivacy(null, {'deviceId': state.devices[widget.index].id}));
           },
           child: Stack(
             alignment: Alignment.center,

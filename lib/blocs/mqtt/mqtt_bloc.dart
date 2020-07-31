@@ -33,7 +33,7 @@ class MqttBloc extends Bloc<MqttEvent, MqttState> {
           throw Error();
         }
 
-        mqttClientWrapper.publishMessage(event.topic.toString(), json.encode(event.payload));
+        mqttClientWrapper.publishMessage(event.topic.toString(), event.payload);
         yield MqttConnected();
       }
       else if (event is MqttConnect) {

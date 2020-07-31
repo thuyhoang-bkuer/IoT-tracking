@@ -123,7 +123,7 @@ class SemiRemoteDeviceRepository extends DeviceRepository {
 
     try {
       final response =
-          await get(url, headers: headers).timeout(Duration(seconds: 5));
+          await get(url, headers: headers).timeout(Duration(seconds: 30));
       if (response.statusCode == 200) {
         return History.fromJson(json.decode(response.body));
       } else
@@ -153,7 +153,7 @@ class SemiRemoteDeviceRepository extends DeviceRepository {
 
     try {
       final response =
-          await get(url, headers: headers).timeout(Duration(seconds: 5));
+          await get(url, headers: headers).timeout(Duration(seconds: 30));
       if (response.statusCode == 200) {
         final jsonMap = json.decode(response.body);
         return Privacy.fromMaps(jsonMap['policies']);
@@ -202,7 +202,7 @@ class RemoteDeviceRepository extends DeviceRepository {
     final headers = {"Content-type": "application/json"};
 
     try {
-      final response = await get(url, headers: headers).timeout(Duration(seconds: 5));
+      final response = await get(url, headers: headers).timeout(Duration(seconds: 30));
       if (response.statusCode == 200) {
         return History.fromJson(json.decode(response.body));
       } else

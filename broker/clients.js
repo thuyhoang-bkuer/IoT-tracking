@@ -23,8 +23,8 @@ const options = {
 }
 
 function generateGPS(deviceId) {
-	gps[deviceId] = gps[deviceId].map((p, i) => p + target[deviceId][i] * (Math.random() - 0.2) * 0.007);
-	return gps[deviceId];
+	gps[deviceId] = gps[deviceId].map((p, i) => p + target[deviceId][i] * (Math.random() - 0.2) * 0.01);
+	return [gps[deviceId][0].toString(), gps[deviceId][1].toString()];
 }
 
 
@@ -36,18 +36,18 @@ const device_1 = mqtt.connect(TCP_URL, options)
 var timer_0;
 var timer_1;
 var gps = [
-	[10.822456, 106.6382113], // Airport
-	[10.77062, 106.655525] // BK Campus 1
+	[106.6382113, 10.822456], // Airport
+	[106.655525, 10.77062] // BK Campus 1
 ];
 
 var dst = [
-	[10.7759925, 106.6941289], // Walking Park
-	[10.87695, 106.7847747] // BK Campus 2
+	[106.6941289, 10.7759925], // Walking Park
+	[106.7847747, 10.87695] // BK Campus 2
 ]
 
 var target = [
-	[10.7759925 - 10.822456, 106.6941289 - 106.6382113],
-	[10.87695 - 10.77062, 106.7847747 - 106.655525]
+	[106.6941289 - 106.6382113, 10.7759925 - 10.822456],
+	[106.7847747 - 106.655525, 10.87695 - 10.77062]
 ]
 
 // // after connect
@@ -81,7 +81,7 @@ device_0.on('connect', () => {
 			console.log(error || `[Device 0] publish Success`)
 			console.log(res)
 		})
-	}, 12000)
+	}, 6000)
 
 })
 
@@ -105,7 +105,7 @@ device_1.on('connect', () => {
 			console.log(error || `[Device 1] publish Success`)
 			console.log(res)
 		})
-	}, 10000)
+	}, 5000)
 })
 
 

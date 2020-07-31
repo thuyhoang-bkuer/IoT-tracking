@@ -79,14 +79,16 @@ router.get('/:deviceId', async (req, res) => {
     }
 });
 
-// router.delete('/:postId', async (req, res) => {
-//     try {
-//         const removedPost = await Location.remove({_id: req.params.postId});
-//         res.json(removedPost);
-//     } catch (error) {
-//         res.json({message: err});
-//     }
-// });
+router.delete('/:deviceId', async (req, res) => {
+    try {
+        const locations = await Location.find({deviceId: req.params.deviceId});
+        locations.forEach(async l => await Coordinate.deleteOne({_id: l.coordinate._id}))
+        const removedPost = await Location.remove({deviceId: req.params.deviceId});
+        res.json(removedPost);
+    } catch (error) {
+        res.json({message: err});
+    }
+});
 
 
 // router.patch('/:postId', async (req, res) => {

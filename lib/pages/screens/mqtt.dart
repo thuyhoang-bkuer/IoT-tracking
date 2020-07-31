@@ -27,16 +27,16 @@ class _MqttFormState extends State<MqttForm> {
   @override
   void initState() {
     super.initState();
-    // _serverUri = '13.76.250.158';
-    // _port = '1883';
-    // _topic = 'Topic/GPS';
-    // _username = 'BKvm2';
-    // _password = 'Hcmut_CSE_2020';
-    _serverUri = '52.148.117.13';
+    _serverUri = '52.230.1.253';
     _port = '1883';
     _topic = 'Topic/GPS';
-    _username = 'vuong-cuong';
-    _password = 'Vuongcuong123';
+    _username = 'BKvm';
+    _password = 'Hcmut_CSE_2020';
+    // _serverUri = '52.148.117.13';
+    // _port = '1883';
+    // _topic = 'Topic/GPS';
+    // _username = 'vuong-cuong';
+    // _password = 'Vuongcuong123';
   }
 
   @override
@@ -267,7 +267,7 @@ class _MqttFormState extends State<MqttForm> {
                 onPressed: () {
                   BlocProvider.of<MqttBloc>(context).add(MqttPublish(
                     topic: null,
-                    payload: {'"action"': '"request/disconnect"'},
+                    payload: '{'"action"': '"request/disconnect"'}',
                   ));
                   BlocProvider.of<MqttBloc>(context).add(MqttDisconnecting());
                 },
@@ -327,12 +327,18 @@ void initializeMqttForm(BuildContext context) {
         BlocProvider.of<MqttBloc>(context).add(MqttDisconnected());
         BlocProvider.of<DeviceBloc>(context).add(ClearDevices());
       }, onDataReceivedCallback: (data) async {
-        Map valueMap = json.decode(data);
+        Map valueMap;
+        try {
+          valueMap = json.decode(data);
+        }
+        on Error { 
+          valueMap = json.decode(data.substring(1, data.length - 1));
+        }
         List<double> gps = [
-          // double.parse(valueMap['values'][0]),
-          // double.parse(valueMap['values'][1]),
-          valueMap['values'][0],
-          valueMap['values'][1],
+          double.parse(valueMap['values'][1]),    // Funny????
+          double.parse(valueMap['values'][0]),
+          // valueMap['values'][0],
+          // valueMap['values'][1],
         ];
         // // Render devices to UI
         List<Device> devices =
@@ -386,16 +392,12 @@ void initializeMqttForm(BuildContext context) {
 
         if (isInside) {
           BlocProvider.of<MqttBloc>(context)
-              .add(MqttPublish(topic: "Topic/LightD", payload: {
-            "device_id": "LightD",
-            "values": ["0", "0"]
-          }));
+              .add(MqttPublish(topic: "Topic/LightD", payload: '[{"device_id": "LightD", "values": ["1", "255"]}]'));
+          BlocProvider.of<DeviceBloc>(context).add(PutDevice(payload: {"deviceId": currentDevice.id, "status": false}));
         } else {
           BlocProvider.of<MqttBloc>(context)
-              .add(MqttPublish(topic: "Topic/LightD", payload: {
-            "device_id": "LightD",
-            "values": ["1", "255"]
-          }));
+              .add(MqttPublish(topic: "Topic/LightD", payload: '[{"device_id": "LightD", "values": ["0", "0"]}]'));
+          BlocProvider.of<DeviceBloc>(context).add(PutDevice(payload: {"deviceId": currentDevice.id, "status": true}));
         }
       }),
     ),

@@ -35,9 +35,9 @@ router.get('/:policyId', async (req, res) => {
     }
 });
 
-router.delete('/:ppcoorId', async (req, res) => {
+router.delete('/:deviceId', async (req, res) => {
     try {
-        const removedPPcoor = await PPCoor.remove({_id: req.params.ppcoorId});
+        const removedPPcoor = await PPCoor.remove({deviceId: req.params.deviceId});
         res.json(removedPPcoor);
     } catch (error) {
         res.json({message: err});

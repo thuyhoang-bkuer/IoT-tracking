@@ -33,7 +33,7 @@ class MqttDisconnected extends MqttEvent {
 
 class MqttPublish extends MqttEvent {
   final String topic;
-  final Map<String, dynamic> payload;
+  final String payload;
 
   MqttPublish({this.topic, this.payload});
 

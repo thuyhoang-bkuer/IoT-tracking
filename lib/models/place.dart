@@ -25,6 +25,7 @@ class Place {
     'phunhuan': 'Phú Nhuận, TP.HCM',
     'tanphu': 'Tân Phú, TP.HCM',
     'binhtan': 'Bình Tân, TP.HCM',
+    'dalat': 'TP. Đà Lạt'
   };
 
   static Future<List<dynamic>> getPoints(String district) async {
